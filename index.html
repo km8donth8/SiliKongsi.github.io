@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SiliconKongsi</title>
+<meta name="description" content="SiliconKongsi: a shared chip shuttle for Malaysia. Submit your design, we stitch it onto a shared chip, fabricate it, package it in Penang and ship it to you.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: a dark wafer. The square tile is the one repeated shape (logo, zoom, slider,
+   shuttle map, bullets). Copper is the only accent. Every moving thing explains a step. */
+:root{
+  color-scheme:dark;
+  --bg:#0a0908;
+  --surface:#131110;
+  --surface-2:#1b1816;
+  --line:#2b2622;
+  --text:#f3ede4;
+  --muted:#a69c8f;
+  --accent:#e28a4d;
+  --accent-soft:rgba(226,138,77,.14);
+  --accent-ink:#1c0f06;
+  --bone:#e9decd;
+  --sme:#8f5d3c;
+  --display:"Bricolage Grotesque","Avenir Next","Segoe UI",system-ui,sans-serif;
+  --body:"Instrument Sans","Segoe UI",system-ui,-apple-system,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --r:14px;
+  --wrap:1160px;
+  --nav:64px;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--body);font-size:17px;line-height:1.6}
+h1,h2,h3,p{margin:0}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;letter-spacing:-.02em;line-height:1.05}
+a{color:inherit}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.skip{position:absolute;left:16px;top:-60px;background:var(--accent);color:var(--accent-ink);padding:8px 14px;border-radius:8px;z-index:100;font-weight:600}
+.skip:focus{top:12px}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 24px}
+section{padding:96px 0;scroll-margin-top:var(--nav)}
+.eyebrow{font-family:var(--mono);font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.eyebrow::before{content:"";width:9px;height:9px;background:var(--accent);border-radius:2px}
+.sec-head{max-width:720px;margin-bottom:48px}
+.sec-head h2{font-size:clamp(32px,4.6vw,52px);font-weight:700}
+.sec-head p{color:var(--muted);margin-top:16px;max-width:60ch}
+.mono{font-family:var(--mono)}
+.kv{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border-radius:10px;font-weight:600;font-size:15.5px;text-decoration:none;border:1px solid transparent;cursor:pointer;transition:transform .15s,background .15s,border-color .15s;white-space:nowrap}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:var(--accent);color:var(--accent-ink)}
+.btn-primary:hover{background:#efa066}
+.btn-ghost{border-color:var(--line);background:rgba(255,255,255,.02)}
+.btn-ghost:hover{border-color:var(--muted)}
+.btn-sm{padding:9px 15px;font-size:14.5px}
+.btn[disabled]{opacity:.5;cursor:default}
+
+/* nav */
+header.nav{position:sticky;top:0;z-index:50;background:rgba(10,9,8,.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav-in{display:flex;align-items:center;gap:24px;height:var(--nav)}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:var(--display);font-weight:700;font-size:20px;letter-spacing:-.02em}
+.logo b{color:var(--accent);font-weight:700}
+.nav-links{display:flex;gap:26px;margin-left:auto;font-size:14.5px}
+.nav-links a{text-decoration:none;color:var(--muted);transition:color .15s}
+.nav-links a:hover{color:var(--text)}
+.menu-btn{display:none;margin-left:auto;background:none;border:1px solid var(--line);border-radius:8px;width:40px;height:40px;cursor:pointer;align-items:center;justify-content:center}
+@media (max-width:960px){
+  .menu-btn{display:inline-flex}
+  .nav-links{display:none;position:absolute;left:0;right:0;top:var(--nav);flex-direction:column;gap:0;background:var(--surface);border-bottom:1px solid var(--line);padding:8px 24px 16px;margin:0}
+  .nav-links.open{display:flex}
+  .nav-links a{padding:12px 0;border-bottom:1px solid var(--line);font-size:16px}
+}
+@media (max-width:420px){.logo span{font-size:17px}.nav-in{gap:10px}.nav-cta{padding:9px 11px;font-size:13.5px}}
+
+/* hero zoom */
+.zoom{padding:0;height:400vh;height:min(400svh,3400px);position:relative}
+.zoom-sticky{position:sticky;top:var(--nav);height:calc(100vh - var(--nav));height:min(calc(100svh - var(--nav)),860px);overflow:hidden}
+.zoom-grid{height:100%;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:center;padding-top:24px;padding-bottom:24px}
+.zoom h1{font-size:clamp(32px,min(5.2vw,8.4vh),68px);font-weight:800;letter-spacing:-.035em;line-height:.98}
+.zoom h1 em{font-style:normal;color:var(--accent)}
+.zoom .sub{font-size:clamp(16px,1.5vw,19px);color:var(--muted);margin-top:20px;max-width:50ch}
+.zoom .cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+.caps{list-style:none;margin:34px 0 0;padding:0;display:grid;gap:4px;max-width:460px}
+.caps li{display:none;grid-template-columns:44px 1fr;gap:4px 10px;padding:12px 14px;border-radius:10px;background:var(--surface);border:1px solid var(--line)}
+.caps li.on{display:grid}
+.zdots{display:flex;gap:6px;margin-top:10px}
+.zdots i{width:26px;height:4px;border-radius:2px;background:var(--line);transition:background .3s}
+.zdots i.on{background:var(--accent)}
+.zoom.static .zdots{display:none}
+.caps .k{font-family:var(--mono);font-size:12px;color:var(--accent);padding-top:3px}
+.caps b{font-family:var(--display);font-size:18px;letter-spacing:-.01em}
+.caps span.d{grid-column:2;color:var(--muted);font-size:14.5px;line-height:1.4}
+.zoom-stage{position:relative;height:100%;min-height:0;display:grid;place-items:center}
+.zoom-stage svg{width:100%;height:100%;max-height:620px;display:block}
+.zoom-hint{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);font-family:var(--mono);font-size:12px;color:var(--muted);background:rgba(10,9,8,.7);padding:4px 12px;border-radius:99px;border:1px solid var(--line);transition:opacity .3s;white-space:nowrap}
+.wire{stroke-dasharray:44 36;animation:flow 1.1s linear infinite}
+@keyframes flow{from{stroke-dashoffset:80}to{stroke-dashoffset:0}}
+.frames{display:none}
+@media (max-width:900px){
+  .zoom-grid{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr);gap:8px;padding-top:18px;padding-bottom:10px}
+  .zoom .sub{margin-top:12px;font-size:15.5px}
+  .zoom .cta{margin-top:16px}
+  .caps{margin-top:14px}
+}
+@media (max-width:900px) and (max-height:700px){.zoom .sub{display:none}}
+/* static version for reduced motion */
+.zoom.static{height:auto}
+.zoom.static .zoom-sticky{position:static;height:auto;overflow:visible}
+.zoom.static .zoom-grid{grid-template-columns:1fr;padding-top:56px}
+.zoom.static .zoom-stage,.zoom.static .caps{display:none}
+.zoom.static .frames{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:36px}
+.frames figure{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px}
+.frames svg{width:100%;height:auto;display:block;border-radius:8px}
+.frames figcaption{margin-top:10px;font-size:14px;color:var(--muted);line-height:1.4}
+.frames figcaption b{display:block;color:var(--text);font-family:var(--display);font-size:17px}
+@media (max-width:820px){.zoom.static .frames{grid-template-columns:1fr 1fr}}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:28px;display:flex;flex-direction:column;gap:14px}
+.stat .num{font-family:var(--display);font-weight:800;font-size:clamp(44px,5.4vw,68px);letter-spacing:-.04em;line-height:1;color:var(--accent)}
+.stat .num.word{font-size:clamp(34px,3.9vw,50px);color:var(--text)}
+.stat p{color:var(--muted);font-size:16px}
+.stat .tag{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:auto;padding-top:14px;border-top:1px solid var(--line)}
+@media (max-width:820px){.stats{grid-template-columns:1fr}}
+
+/* cost slider */
+.cost{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:48px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:36px}
+.split{display:grid;gap:3px;aspect-ratio:1;background:var(--bg);border:1px solid #3a332d;border-radius:14px;padding:12px;position:relative}
+.split i{display:block;background:var(--surface-2);border:1px solid #3a332d;border-radius:3px;min-width:0;min-height:0}
+.split i.me{background:var(--accent);border-color:var(--accent);box-shadow:0 0 18px rgba(226,138,77,.55)}
+.cost-r{display:flex;flex-direction:column;gap:22px;min-width:0}
+.cost-price{font-family:var(--display);font-weight:800;font-size:clamp(44px,7vw,84px);letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums;color:var(--accent)}
+.cost-price small{font-family:var(--mono);font-weight:400;font-size:14px;color:var(--muted);letter-spacing:0;margin-left:10px}
+.cost-eq{font-family:var(--mono);font-size:13.5px;color:var(--muted)}
+.cost-eq b{color:var(--text);font-weight:500}
+.rng{-webkit-appearance:none;appearance:none;width:100%;height:28px;background:transparent;cursor:pointer;margin:0}
+.rng::-webkit-slider-runnable-track{height:6px;border-radius:99px;background:linear-gradient(90deg,var(--accent) var(--fill,0%),var(--line) var(--fill,0%))}
+.rng::-moz-range-track{height:6px;border-radius:99px;background:var(--line)}
+.rng::-moz-range-progress{height:6px;border-radius:99px;background:var(--accent)}
+.rng::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:7px;background:var(--text);border:3px solid var(--accent);margin-top:-10px}
+.rng::-moz-range-thumb{width:20px;height:20px;border-radius:7px;background:var(--text);border:3px solid var(--accent)}
+.rng-ends{display:flex;justify-content:space-between;gap:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-top:8px}
+.rng-ends span:last-child{text-align:right}
+@media (max-width:820px){.cost{grid-template-columns:1fr;padding:22px;gap:28px}.split{max-width:300px;width:100%;margin:0 auto}}
+
+/* how it works */
+.how{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:48px;align-items:start}
+.flow{list-style:none;margin:0;padding:0;display:grid;gap:22px;position:relative}
+.flow::before{content:"";position:absolute;left:25px;top:10px;bottom:10px;width:1px;background:repeating-linear-gradient(180deg,var(--accent) 0 6px,transparent 6px 12px);opacity:.55}
+.flow li{display:grid;grid-template-columns:52px 1fr;column-gap:18px;position:relative}
+.flow .ic{width:52px;height:52px;border-radius:12px;background:var(--surface-2);border:1px solid var(--line);display:grid;place-items:center;color:var(--accent);grid-row:1 / span 3}
+.flow li.end .ic{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.flow .n{font-family:var(--mono);font-size:11.5px;color:var(--muted);letter-spacing:.08em}
+.flow h3{font-size:19px;font-weight:700;margin:2px 0 4px;letter-spacing:-.01em;line-height:1.2}
+.flow p{font-size:15px;color:var(--muted);line-height:1.5;max-width:46ch}
+.x3d{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:24px;position:sticky;top:calc(var(--nav) + 20px)}
+.scene{display:grid;place-items:center;width:100%;height:330px;perspective:1000px;background:none;border:0;padding:0;cursor:pointer;border-radius:12px;-webkit-tap-highlight-color:transparent}
+.stack{width:180px;height:180px;position:relative;transform-style:preserve-3d;transform:rotateX(62deg) rotateZ(35deg);animation:spin 28s linear infinite}
+.x3d.paused .stack{animation-play-state:paused}
+@keyframes spin{from{transform:rotateX(62deg) rotateZ(0)}to{transform:rotateX(62deg) rotateZ(360deg)}}
+.ly{position:absolute;inset:0;border-radius:10px;transition:transform .8s cubic-bezier(.2,.8,.2,1),opacity .5s}
+.l-tr{transform:translateZ(0);inset:20%;background-color:#0d0b0a;background-image:radial-gradient(var(--accent) 1.3px,transparent 1.6px);background-size:9px 9px;border:1px solid var(--sme);border-radius:5px}
+.l-metal{transform:translateZ(5px);inset:20%;border-radius:5px;border:1px solid var(--accent);background-image:repeating-linear-gradient(0deg,rgba(226,138,77,.85) 0 2px,transparent 2px 11px),repeating-linear-gradient(90deg,rgba(226,138,77,.5) 0 2px,transparent 2px 17px)}
+.l-die{transform:translateZ(10px);inset:18%;border-radius:5px;background:linear-gradient(135deg,#cfc5b6,#8d857a);border:1px solid var(--bone);background-size:100% 100%}
+.l-die::after{content:"";position:absolute;inset:8%;background-image:linear-gradient(rgba(10,9,8,.35) 1px,transparent 1px),linear-gradient(90deg,rgba(10,9,8,.35) 1px,transparent 1px);background-size:20% 20%}
+.l-pkg{transform:translateZ(16px)}
+.l-pkg .ph,.l-pkg .pv{position:absolute;background-repeat:repeat}
+.l-pkg .ph{left:16px;right:16px;top:-11px;bottom:-11px;background-image:repeating-linear-gradient(90deg,var(--sme) 0 7px,transparent 7px 18.5px)}
+.l-pkg .pv{top:16px;bottom:16px;left:-11px;right:-11px;background-image:repeating-linear-gradient(0deg,var(--sme) 0 7px,transparent 7px 18.5px)}
+.l-pkg .body{position:absolute;inset:0;border-radius:10px;background:#1b1816;border:1px solid #4a4037;transition:opacity .5s}
+.l-pkg .body::after{content:"";position:absolute;left:12px;top:12px;width:9px;height:9px;border-radius:50%;background:var(--accent)}
+.scene.open .l-pkg{transform:translateZ(120px)}
+.scene.open .l-die{transform:translateZ(50px)}
+.scene.open .l-metal{transform:translateZ(-20px)}
+.scene.open .l-tr{transform:translateZ(-90px)}
+@media (hover:hover){
+  .scene:hover .l-pkg{transform:translateZ(120px)}
+  .scene:hover .l-die{transform:translateZ(50px)}
+  .scene:hover .l-metal{transform:translateZ(-20px)}
+  .scene:hover .l-tr{transform:translateZ(-90px)}
+}
+.x3d .hint{text-align:center;font-family:var(--mono);font-size:12px;color:var(--muted);margin:0 0 16px}
+.layers{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.layers li{display:grid;grid-template-columns:18px 1fr;gap:12px;align-items:start;font-size:14.5px;color:var(--muted);line-height:1.4}
+.layers i{width:16px;height:16px;border-radius:4px;margin-top:2px;border:1px solid #4a4037}
+.layers b{color:var(--text);font-weight:600}
+@media (max-width:900px){.how{grid-template-columns:1fr}.x3d{position:static}}
+
+/* upload demo */
+.up{display:grid;grid-template-columns:1fr 1fr;gap:24px;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:28px}
+.up-l{display:flex;flex-direction:column;gap:16px;min-width:0}
+.drop{border:1.5px dashed #5a5047;border-radius:14px;padding:30px 20px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px;transition:border-color .2s,background .2s;background:var(--bg)}
+.drop.over{border-color:var(--accent);background:var(--accent-soft)}
+.drop strong{font-family:var(--display);font-size:22px;letter-spacing:-.01em}
+.drop span{color:var(--muted);font-size:14px}
+.field label{display:block;font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.field input,form input[type=email]{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:16px}
+.field input:focus,form input[type=email]:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.up-note{font-size:13.5px;color:var(--muted)}
+.term{background:#050404;border:1px solid var(--line);border-radius:14px;padding:18px 20px;font-family:var(--mono);font-size:13.5px;line-height:1.7;min-height:290px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.term .bar3{display:flex;gap:6px;margin-bottom:8px}
+.term .bar3 i{width:9px;height:9px;border-radius:50%;background:#3a332d}
+.term .idle{color:var(--muted)}
+.term .ln{overflow-wrap:anywhere}
+.term .dim{color:var(--muted)}
+.term .warn{color:var(--bone);background:rgba(233,222,205,.06);border-left:2px solid var(--bone);padding:6px 10px;border-radius:0 6px 6px 0;font-family:var(--body);font-size:14.5px;line-height:1.45}
+.term .warn small{display:block;font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.term .pass{color:var(--accent);font-weight:700;font-size:17px}
+.pbar{height:8px;background:var(--surface-2);border-radius:99px;overflow:hidden;margin:4px 0}
+.pbar i{display:block;height:100%;width:0;background:var(--accent);border-radius:99px}
+@media (max-width:860px){.up{grid-template-columns:1fr;padding:18px}.term{min-height:240px}}
+
+/* shuttle tracker */
+.tracker{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:28px;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:32px}
+.tr-meta{display:flex;flex-direction:column;gap:26px}
+.tr-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.tr-name{font-family:var(--mono);font-weight:700;font-size:clamp(36px,4.4vw,52px);letter-spacing:-.02em;line-height:1}
+.status{font-family:var(--mono);font-size:12px;color:var(--accent);background:var(--accent-soft);border-radius:99px;padding:5px 12px;display:inline-flex;gap:8px;align-items:center}
+.status i{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:blink 1.6s infinite}
+@keyframes blink{50%{opacity:.25}}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.facts div span{display:block;font-family:var(--mono);font-size:15px}
+.count{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.count div{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:14px 8px;text-align:center}
+.count b{display:block;font-family:var(--mono);font-size:clamp(24px,3vw,34px);font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
+.count span{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.bar{height:10px;background:var(--bg);border:1px solid var(--line);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--sme),var(--accent));border-radius:99px;width:0;transition:width 1.2s cubic-bezier(.2,.7,.2,1)}
+.bar-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.bar-row b{font-family:var(--mono);font-size:20px;font-variant-numeric:tabular-nums}
+.map-wrap{position:relative}
+.map{display:grid;grid-template-columns:repeat(10,1fr);grid-template-rows:repeat(10,1fr);gap:5px;background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:14px;aspect-ratio:1}
+.t{border-radius:5px;border:0;padding:0;cursor:pointer;min-width:0;min-height:0;transition:transform .12s,box-shadow .12s;font-family:var(--mono);font-size:11px;font-weight:700;color:var(--accent-ink);overflow:hidden}
+.e{border:1px dashed #3a332d;border-radius:5px}
+.t.uni{background:var(--accent)}
+.t.startup{background-color:var(--bone)}
+.t.sme{background-color:var(--sme)}
+.t.priv{background-image:repeating-linear-gradient(135deg,rgba(10,9,8,.5) 0 3px,transparent 3px 7px)}
+.t.slot{background:transparent;border:1.5px dashed var(--accent);color:var(--accent);font-weight:500}
+.t.mine{background:var(--text);border:0;color:var(--accent-ink);box-shadow:0 0 0 2px var(--accent),0 0 26px 4px rgba(226,138,77,.75);animation:glow 1.8s ease-in-out infinite;position:relative;z-index:1}
+@keyframes glow{50%{box-shadow:0 0 0 2px var(--accent),0 0 10px 1px rgba(226,138,77,.45)}}
+.t:hover,.t:focus-visible{transform:scale(1.06);box-shadow:0 0 0 2px var(--bg),0 0 0 3px var(--text);outline:none;position:relative;z-index:2}
+.tip{position:absolute;z-index:5;pointer-events:none;background:#000;border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-width:170px;max-width:240px;font-size:14px;line-height:1.35;opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s;box-shadow:0 12px 30px rgba(0,0,0,.6)}
+.tip.show{opacity:1;transform:none}
+.tip .id{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.08em}
+.tip .nm{font-weight:600;margin:2px 0}
+.tip .ow{font-family:var(--mono);font-size:11.5px;color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:16px;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.mine-label{display:none;margin-top:14px;padding:12px 14px;border:1px solid var(--accent);background:var(--accent-soft);border-radius:10px;font-weight:600}
+.mine-label.show{display:block}
+.hint{font-size:13.5px;color:var(--muted);margin-top:10px}
+.ghost{position:fixed;z-index:80;left:0;top:0;border-radius:5px;background:var(--text);box-shadow:0 0 0 2px var(--accent),0 0 40px 8px rgba(226,138,77,.8);pointer-events:none}
+@media (max-width:900px){.tracker{grid-template-columns:1fr;padding:20px}.map{gap:3px;padding:10px}.t{font-size:9px}}
+
+/* journey */
+.journey{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:28px}
+.journey svg{width:100%;height:auto;display:block}
+.land{fill:#1d1a17;stroke:#4a4037;stroke-width:1.2;stroke-linejoin:round}
+.stop circle{fill:var(--bg);stroke:#5a5047;stroke-width:1.5;transition:fill .3s,stroke .3s}
+.stop text{fill:var(--muted);font-family:var(--mono);font-size:14px;font-weight:700;text-anchor:middle;transition:fill .3s}
+.stop.on circle{fill:var(--accent);stroke:var(--accent)}
+.stop.on text{fill:var(--accent-ink)}
+.jsteps{list-style:none;margin:20px 0 0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.jsteps li{border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--bg);transition:border-color .3s,background .3s;font-size:14.5px;color:var(--muted);line-height:1.4}
+.jsteps li b{display:block;color:var(--text);font-family:var(--display);font-size:17px;margin-bottom:2px}
+.jsteps li .k{font-family:var(--mono);font-size:11.5px;color:var(--accent);letter-spacing:.08em}
+.jsteps li.on{border-color:var(--accent);background:var(--accent-soft)}
+.j-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:16px}
+@media (max-width:820px){.jsteps{grid-template-columns:1fr 1fr}.journey{padding:16px}}
+
+/* pricing */
+.seg{display:inline-grid;grid-template-columns:1fr 1fr;position:relative;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:4px;margin:0 0 36px;min-width:0}
+.seg legend{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label{position:relative;z-index:1;padding:10px 22px;border-radius:9px;font-weight:600;font-size:15px;cursor:pointer;text-align:center;color:var(--muted);transition:color .2s}
+.seg input:checked+label{color:var(--accent-ink)}
+.seg input:focus-visible+label{outline:2px solid var(--text);outline-offset:2px}
+.seg .thumb{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);background:var(--accent);border-radius:9px;transition:transform .28s cubic-bezier(.3,.8,.3,1)}
+.seg.right .thumb{transform:translateX(100%)}
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:stretch}
+.plan{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:30px 26px;display:flex;flex-direction:column;gap:18px}
+.plan.pop{border-color:var(--accent);background:linear-gradient(180deg,rgba(226,138,77,.10),var(--surface) 46%);box-shadow:0 0 0 1px var(--accent),0 24px 60px -30px rgba(226,138,77,.5)}
+.badge{position:absolute;top:-12px;left:24px;background:var(--accent);color:var(--accent-ink);font-family:var(--mono);font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:6px}
+.plan h3{font-size:22px;font-weight:700}
+.plan .who{color:var(--muted);font-size:14.5px;margin-top:6px}
+.price{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px;padding-bottom:18px;border-bottom:1px solid var(--line)}
+.price .from{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.price .amt{font-family:var(--display);font-weight:800;font-size:clamp(32px,3.4vw,42px);letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+.price .unit{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.plan ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;font-size:15.5px}
+.plan li{display:grid;grid-template-columns:16px 1fr;gap:10px;align-items:start}
+.plan li::before{content:"";width:8px;height:8px;margin-top:9px;background:var(--accent);border-radius:2px}
+.plan .btn{margin-top:auto}
+@media (max-width:900px){.plans{grid-template-columns:1fr}.seg{display:grid;width:100%}.seg label{padding:10px 8px;font-size:14px}}
+
+/* compare */
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:700px;font-size:15.5px}
+th,td{padding:16px 20px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child th,tr:last-child td{border-bottom:0}
+thead th{font-family:var(--mono);font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+tbody th{font-weight:600;width:24%}
+td{color:var(--muted)}
+.us{background:rgba(226,138,77,.08);color:var(--text)!important;border-left:1px solid rgba(226,138,77,.45);border-right:1px solid rgba(226,138,77,.45)}
+thead .us{color:var(--accent)!important;font-weight:700}
+.y,.x{font-weight:700;margin-right:6px}
+.y{color:var(--accent)}
+.x{color:#7d746a}
+
+/* roadmap */
+.road{display:grid;grid-template-columns:repeat(3,1fr);gap:0;position:relative}
+.road::before{content:"";position:absolute;left:0;right:0;top:9px;height:2px;background:linear-gradient(90deg,var(--accent) 0 33%,var(--line) 33%)}
+.ph3{position:relative;padding:44px 28px 0 0}
+.ph3::before{content:"";position:absolute;left:0;top:0;width:20px;height:20px;border-radius:5px;background:var(--bg);border:2px solid var(--line)}
+.ph3.now::before{background:var(--accent);border-color:var(--accent);box-shadow:0 0 0 6px var(--accent-soft)}
+.ph3 .lab{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.chip-tag{border:1px solid var(--line);border-radius:99px;padding:2px 9px;font-size:11px;color:var(--muted)}
+.ph3.now .chip-tag{border-color:var(--accent);color:var(--accent)}
+.ph3 h3{font-size:24px;font-weight:700;margin:12px 0 10px}
+.ph3 p{color:var(--muted);font-size:15.5px;max-width:34ch}
+@media (max-width:820px){
+  .road{grid-template-columns:1fr;gap:36px}
+  .road::before{left:9px;right:auto;top:0;bottom:0;width:2px;height:auto;background:linear-gradient(180deg,var(--accent) 0 30%,var(--line) 30%)}
+  .ph3{padding:0 0 0 44px}
+}
+
+/* faq */
+.faq{max-width:820px;display:flex;flex-direction:column;gap:12px}
+details{background:var(--surface);border:1px solid var(--line);border-radius:12px;transition:border-color .2s}
+details[open]{border-color:#4a4037}
+summary{list-style:none;cursor:pointer;padding:20px 22px;font-family:var(--display);font-weight:700;font-size:19px;display:flex;justify-content:space-between;gap:16px;align-items:center;border-radius:12px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-family:var(--mono);font-weight:400;font-size:22px;color:var(--accent);transition:transform .2s;flex:none}
+details[open] summary::after{transform:rotate(45deg)}
+details p{padding:0 22px 22px;color:var(--muted);max-width:66ch}
+
+/* cta */
+.cta-box{background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:clamp(28px,5vw,64px);display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center}
+.cta-box h2{font-size:clamp(30px,4.2vw,48px);font-weight:800}
+.cta-box p.lead{color:var(--muted);margin-top:14px;max-width:46ch}
+form .row{display:flex;gap:10px;flex-wrap:wrap}
+form label{display:block;font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+form input[type=email]{flex:1 1 220px;min-width:0;width:auto}
+form small{display:block;margin-top:12px;color:var(--muted);font-size:13.5px}
+.ok{display:none;background:var(--accent-soft);border:1px solid rgba(226,138,77,.5);border-radius:12px;padding:18px 20px}
+.ok.show{display:block}
+.ok b{display:block;font-family:var(--display);font-size:20px;margin-bottom:4px}
+.ok span{color:var(--muted);font-size:15px;overflow-wrap:anywhere}
+@media (max-width:860px){.cta-box{grid-template-columns:1fr}}
+
+footer{border-top:1px solid var(--line);padding:32px 0 44px;margin-top:40px;color:var(--muted);font-size:14px}
+.foot{display:flex;justify-content:space-between;gap:16px 32px;flex-wrap:wrap;align-items:center}
+.foot .mono{font-size:12.5px}
+
+[data-reveal]{transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1)}
+[data-reveal].pre{opacity:.12;transform:translateY(18px)}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  [data-reveal].pre{opacity:1;transform:none}
+  .stack{transform:rotateX(62deg) rotateZ(35deg)}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="logo" href="#top" aria-label="SiliconKongsi home">
+      <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
+        <g stroke="#e28a4d" stroke-width="1.6" stroke-linecap="round"><path d="M10 1.5v4M15 1.5v4M20 1.5v4M10 24.5v4M15 24.5v4M20 24.5v4M1.5 10h4M1.5 15h4M1.5 20h4M24.5 10h4M24.5 15h4M24.5 20h4"/></g>
+        <rect x="5.5" y="5.5" width="19" height="19" rx="4" fill="#131110" stroke="#f3ede4" stroke-width="1.6"/>
+        <rect x="9.5" y="9.5" width="4.6" height="4.6" rx="1" fill="#e28a4d"/>
+        <rect x="15.9" y="9.5" width="4.6" height="4.6" rx="1" fill="#4a4037"/>
+        <rect x="9.5" y="15.9" width="4.6" height="4.6" rx="1" fill="#4a4037"/>
+        <rect x="15.9" y="15.9" width="4.6" height="4.6" rx="1" fill="#e9decd"/>
+      </svg>
+      <span>Silicon<b>Kongsi</b></span>
+    </a>
+    <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="navLinks" aria-label="Open menu">
+      <svg width="18" height="14" viewBox="0 0 18 14" aria-hidden="true"><path d="M1 1h16M1 7h16M1 13h16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+    <nav class="nav-links" id="navLinks" aria-label="Sections">
+      <a href="#cost">Cost</a>
+      <a href="#how">How it works</a>
+      <a href="#upload">Try it</a>
+      <a href="#shuttle">Shuttle</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a class="btn btn-primary btn-sm nav-cta" href="#upload">Submit a design</a>
+  </div>
+</header>
+
+<main id="main">
+<span id="top"></span>
+
+<!-- HERO ZOOM -->
+<section class="zoom" id="zoom" aria-labelledby="h-hero">
+  <div class="zoom-sticky">
+    <div class="wrap zoom-grid">
+      <div>
+        <h1 id="h-hero">From packaging the world's chips to <em>designing our own.</em></h1>
+        <p class="sub">Submit your chip design. We stitch it onto a shared shuttle, fabricate it, package it in Penang and ship it to you.</p>
+        <div class="cta">
+          <a class="btn btn-primary" href="#upload">Submit a design</a>
+          <a class="btn btn-ghost" href="#pricing">See pricing</a>
+        </div>
+        <ol class="caps" id="caps" aria-label="What you are looking at as you scroll"></ol>
+        <div class="zdots" id="zdots" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        <div class="frames" id="frames"></div>
+      </div>
+      <div class="zoom-stage">
+        <svg id="zoomSvg" viewBox="0 0 1000 1000" role="img" aria-label="Scroll-driven zoom: a full silicon wafer, then one chip on it, then that chip's grid of 100 design tiles, then a single tile with logic gates and wires."></svg>
+        <div class="zoom-hint" id="zoomHint" aria-hidden="true">Scroll to zoom in ↓</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section id="problem" aria-labelledby="h-problem">
+  <div class="wrap">
+    <div class="sec-head" data-reveal>
+      <div class="eyebrow">The problem</div>
+      <h2 id="h-problem">Malaysia finishes the world's chips. It rarely starts them.</h2>
+      <p>The country has the packaging industry and a national plan for design talent. What is missing is an affordable way for a student team or a ten-person startup to put a first design on real silicon.</p>
+    </div>
+    <div class="stats">
+      <article class="stat" data-reveal><div class="num">13%</div><p>of global chip assembly, test &amp; packaging happens in Malaysia</p><div class="tag">Packaging strength</div></article>
+      <article class="stat" data-reveal><div class="num">60,000</div><p>high-skilled engineers targeted under the National Semiconductor Strategy</p><div class="tag">Talent target</div></article>
+      <article class="stat" data-reveal><div class="num word">Out of reach</div><p>Private prototype chips are out of reach for most startups</p><div class="tag">The gap we close</div></article>
+    </div>
+  </div>
+</section>
+
+<!-- COST SLIDER -->
+<section id="cost" aria-labelledby="h-cost">
+  <div class="wrap">
+    <div class="sec-head" data-reveal>
+      <div class="eyebrow">Why share</div>
+      <h2 id="h-cost">A chip costs the same to make whether one team uses it or a hundred.</h2>
+      <p>Drag the slider. The same chip is split between more designs, and your share of the bill shrinks with it.</p>
+    </div>
+    <div class="cost" data-reveal>
+      <div class="split" id="split" role="img" aria-label="One chip split into tiles. Your tile is highlighted."></div>
+      <div class="cost-r">
+        <div>
+          <div class="kv">You pay</div>
+          <div class="cost-price"><span id="costPrice">RM2,500</span><small>per tile</small></div>
+        </div>
+        <div class="cost-eq" id="costEq"></div>
+        <div>
+          <label class="sr" for="costRng">How many designs share the chip</label>
+          <input class="rng" type="range" id="costRng" min="1" max="10" step="1" value="10">
+          <div class="rng-ends"><span>Book your own wafer run</span><span>Carpool with 99 others</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" aria-labelledby="h-how">
+  <div class="wrap">
+    <div class="sec-head" data-reveal>
+      <div class="eyebrow">How it works</div>
+      <h2 id="h-how">Six steps from your layout file to a chip on your desk.</h2>
+      <p>You design in the tools you already use, open-source or commercial. We take it from the finished layout.</p>
+    </div>
+    <div class="how">
+      <ol class="flow" data-reveal>
+        <li>
+          <div class="ic"><svg width="24" height="24" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 17V4M8 9l5-5 5 5M4 17v3.500a1.500 1.500 0 001.500 1.500h15a1.500 1.500 0 001.500-1.500V17"/></svg></div>
+          <span class="n">STEP 1</span><h3>Upload GDS</h3>
+          <p>Upload your GDS layout file to our portal. GDS is the standard drawing of a chip that every foundry accepts.</p>
+        </li>
+        <li>
+          <div class="ic"><svg width="24" height="24" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2.500l8.500 3.200v6.600c0 5.200-3.600 9-8.500 11.200-4.900-2.200-8.500-6-8.500-11.200V5.700z"/><path d="M9 13l3 3 5.500-6"/></svg></div>
+          <span class="n">STEP 2</span><h3>AI pre-check</h3>
+          <p>Our AI scans the layout for manufacturing-rule errors and explains any problem in plain English, before money is spent.</p>
+        </li>
+        <li>
+          <div class="ic"><svg width="24" height="24" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="12" height="12" rx="1.5"/><rect x="17.500" y="3" width="5.500" height="5.500" rx="1.200"/><rect x="17.500" y="9.500" width="5.500" height="5.500" rx="1.200"/><rect x="3" y="17.500" width="5.500" height="5.500" rx="1.200"/><rect x="11" y="17.500" width="12" height="5.500" rx="1.200" fill="currentColor"/></svg></div>
+          <span class="n">STEP 3</span><h3>AI stitching onto shared chip</h3>
+          <p>The stitching engine packs designs of different sizes onto one chip with minimal wasted area and assigns the shared pins.</p>
+        </li>
+        <li>
+          <div class="ic"><svg width="24" height="24" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="13" cy="13" r="10"/><path d="M5.500 9h15M3.500 13h19M5.500 17h15M9 3.800v18.400M13 3v20M17 3.800v18.400"/></svg></div>
+          <span class="n">STEP 4</span><h3>Fabricate</h3>
+          <p>The combined chip goes to a foundry as one order, so the manufacturing cost is split across every design.</p>
+        </li>
+        <li>
+          <div class="ic"><svg width="24" height="24" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6.500" y="6.500" width="13" height="13" rx="2"/><path d="M10 3v3.500M16 3v3.500M10 19.500V23M16 19.500V23M3 10h3.500M3 16h3.500M19.500 10H23M19.500 16H23M10.500 13l2 2 3.500-4"/></svg></div>
+          <span class="n">STEP 5</span><h3>Package &amp; test in Penang</h3>
+          <p>The bare chips are packaged and tested in Penang. You get a test report with your parts.</p>
+        </li>
+        <li class="end">
+          <div class="ic"><svg width="24" height="24" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.500l10-5 10 5v9l-10 5-10-5z"/><path d="M3 8.500l10 5 10-5M13 13.500v9"/></svg></div>
+          <span class="n">STEP 6</span><h3>Delivered</h3>
+          <p>Your own packaged chips arrive at your lab or office, ready for the bench.</p>
+        </li>
+      </ol>
+      <div class="x3d" id="x3d" data-reveal>
+        <div class="kv">What is inside a chip</div>
+        <button class="scene" id="scene" type="button" aria-pressed="false" aria-label="3D chip. Activate to pull its layers apart: package, die, metal layers, transistors.">
+          <span class="stack" aria-hidden="true">
+            <span class="ly l-tr"></span>
+            <span class="ly l-metal"></span>
+            <span class="ly l-die"></span>
+            <span class="ly l-pkg"><span class="ph"></span><span class="pv"></span><span class="body"></span></span>
+          </span>
+        </button>
+        <p class="hint" id="sceneHint">Hover or tap the chip to pull it apart</p>
+        <ul class="layers">
+          <li><i style="background:#1b1816"></i><span><b>Package.</b> The black shell with metal pins that you solder to a circuit board.</span></li>
+          <li><i style="background:linear-gradient(135deg,#cfc5b6,#8d857a)"></i><span><b>Die.</b> The sliver of silicon cut from the wafer. This is the part we share.</span></li>
+          <li><i style="background:repeating-linear-gradient(0deg,#e28a4d 0 2px,#131110 2px 5px)"></i><span><b>Metal layers.</b> Stacked copper wiring that connects everything together.</span></li>
+          <li><i style="background:#0d0b0a radial-gradient(#e28a4d 1.2px,transparent 1.5px) 0 0/5px 5px"></i><span><b>Transistors.</b> Millions of tiny switches at the bottom that do the actual logic.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- UPLOAD DEMO -->
+<section id="upload" aria-labelledby="h-upload">
+  <div class="wrap">
+    <div class="sec-head" data-reveal>
+      <div class="eyebrow">Try it</div>
+      <h2 id="h-upload">Put a design on the next shuttle, right now.</h2>
+      <p>Drop a file or use our sample. Watch the pre-check run, then watch your design take its place on the shared chip.</p>
+    </div>
+    <div class="up" data-reveal>
+      <div class="up-l">
+        <div class="field">
+          <label for="yourName">Your name</label>
+          <input type="text" id="yourName" maxlength="24" autocomplete="given-name" placeholder="e.g. Aisha">
+        </div>
+        <div class="drop" id="drop">
+          <svg width="34" height="34" viewBox="0 0 26 26" fill="none" stroke="#e28a4d" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 17V4M8 9l5-5 5 5M4 17v3.500a1.500 1.500 0 001.500 1.500h15a1.500 1.500 0 001.500-1.500V17"/></svg>
+          <strong>Drop your GDS file here</strong>
+          <span>or</span>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+            <button class="btn btn-ghost btn-sm" type="button" id="pickBtn">Choose a file</button>
+            <button class="btn btn-primary btn-sm" type="button" id="sampleBtn">Try a sample design</button>
+          </div>
+          <input class="sr" type="file" id="fileIn" accept=".gds,.gds2,.gdsii,.oas" tabindex="-1" aria-hidden="true">
+        </div>
+        <p class="up-note">Front-end demo. Nothing is uploaded or stored, and it resets when you reload.</p>
+      </div>
+      <div class="term" id="term" role="log" aria-live="polite" aria-label="Pre-check output">
+        <div class="bar3" aria-hidden="true"><i></i><i></i><i></i></div>
+        <div class="idle" id="termIdle">Waiting for a design. The AI pre-check report will appear here.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SHUTTLE TRACKER -->
+<section id="shuttle" aria-labelledby="h-shuttle">
+  <div class="wrap">
+    <div class="sec-head" data-reveal>
+      <div class="eyebrow">Live shuttle tracker</div>
+      <h2 id="h-shuttle">See who is already on board.</h2>
+      <p>Small student designs sit next to larger commercial ones, packed with no wasted space. Company designs stay private: the map shows only that the area is taken.</p>
+    </div>
+    <div class="tracker" data-reveal>
+      <div class="tr-meta">
+        <div class="tr-top">
+          <div><div class="kv">Next shuttle</div><div class="tr-name" id="shName">SK-26C</div></div>
+          <span class="status"><i></i>Accepting designs</span>
+        </div>
+        <div class="facts">
+          <div><div class="kv">Process</div><span id="shProc">130 nm open PDK</span></div>
+          <div><div class="kv">Submission closes</div><span id="shDate">—</span></div>
+        </div>
+        <div>
+          <div class="kv">Time left to submit</div>
+          <div class="count" role="timer" aria-label="Time left until submission deadline">
+            <div><b id="cdD">45</b><span>Days</span></div>
+            <div><b id="cdH">00</b><span>Hours</span></div>
+            <div><b id="cdM">00</b><span>Min</span></div>
+            <div><b id="cdS">00</b><span>Sec</span></div>
+          </div>
+        </div>
+        <div>
+          <div class="bar-row"><div class="kv" style="margin:0">Area filled</div><b><span id="fillN">68</span>%</b></div>
+          <div class="bar" id="fillBar" role="progressbar" aria-label="Chip area filled" aria-valuemin="0" aria-valuemax="100" aria-valuenow="68"><i></i></div>
+        </div>
+        <a class="btn btn-primary" href="#upload" style="align-self:flex-start">Submit a design</a>
+      </div>
+      <div>
+        <div class="map-wrap" id="mapWrap">
+          <div class="map" id="map" role="group" aria-label="Chip map for the next shuttle. Tiles of different sizes. Use arrow keys to move between designs."></div>
+          <div class="tip" id="tip" role="status" aria-live="polite"></div>
+        </div>
+        <div class="mine-label" id="mineLabel" role="status" aria-live="polite"></div>
+        <div class="legend" aria-hidden="true">
+          <span><i style="background:var(--accent)"></i>University</span>
+          <span><i style="background:var(--bone);background-image:repeating-linear-gradient(135deg,rgba(10,9,8,.5) 0 3px,transparent 3px 7px)"></i>Startup (private)</span>
+          <span><i style="background:var(--sme);background-image:repeating-linear-gradient(135deg,rgba(10,9,8,.5) 0 3px,transparent 3px 7px)"></i>SME (private)</span>
+          <span><i style="border:1px dashed #5a5047"></i>Free</span>
+        </div>
+        <p class="hint">Hover, tap or use arrow keys to inspect a design. Mock data.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- JOURNEY MAP -->
+<section id="journey" aria-labelledby="h-journey">
+  <div class="wrap">
+    <div class="sec-head" data-reveal>
+      <div class="eyebrow">The journey</div>
+      <h2 id="h-journey">Designed anywhere in Malaysia. Finished in Penang.</h2>
+      <p>Follow one chip from a designer's laptop to the foundry, through packaging and test in Penang, and back to the person who designed it.</p>
+    </div>
+    <div class="journey" data-reveal>
+      <svg id="jmap" viewBox="0 0 800 330" role="img" aria-label="Stylised map of Peninsular Malaysia and Malaysian Borneo. A route runs from a designer, to a foundry, to packaging and test in Penang, and back to the designer.">
+        <text x="120" y="310" fill="#5a5047" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="1.5" text-anchor="middle">PENINSULAR MALAYSIA</text>
+        <text x="600" y="310" fill="#5a5047" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="1.5" text-anchor="middle">SABAH &amp; SARAWAK</text>
+        <text x="330" y="150" fill="#3a332d" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="3" text-anchor="middle">SOUTH CHINA SEA</text>
+        <polygon class="land" points="69.6,72.4 78.6,83.2 78.6,112 87.6,140.8 91.2,162.4 102,184 112.8,205.6 130.8,223.6 145.2,234.4 170.4,248.8 188.4,265 213.6,264.3 220.8,259.6 206.4,230.8 190.2,209.2 190.2,184 188.4,162.400 190.2,140.8 177.6,119.2 159.6,101.2 147,90.4 130.8,104.8 105.6,108.4 102,86.8 93,79.600 76.8,72.4"/>
+        <ellipse class="land" cx="70" cy="119" rx="5" ry="6.500"/>
+        <polygon class="land" points="413.4,238.7 438.6,252.4 462,256 476.4,227.2 498,209.2 534,198.4 566.4,158.8 591.6,137.2 620.4,119.2 642,97.6 667.2,65.2 685.2,65.2 703.2,83.2 717.6,104.8 757.2,126.4 735.6,151.6 710.4,162.400 678,158.8 638.4,158.8 627.6,191.2 606,220 591.6,259.6 559.2,266.8 505.2,259.600 483.6,277.6 444,281.2 411.6,259.6"/>
+        <!-- Penang highlight -->
+        <circle cx="74" cy="119" r="26" fill="rgba(226,138,77,.16)" stroke="#e28a4d" stroke-width="1" stroke-dasharray="3 4"/>
+        <text x="74" y="62" fill="#e28a4d" font-family="JetBrains Mono, monospace" font-size="13" font-weight="700" text-anchor="middle" letter-spacing="1">PENANG</text>
+        <!-- foundry -->
+        <rect x="372" y="26" width="56" height="34" rx="6" fill="#131110" stroke="#4a4037"/>
+        <path d="M382 52V40l9 5v-5l9 5v-9h10v16z" fill="none" stroke="#a69c8f" stroke-width="1.5" stroke-linejoin="round"/>
+        <text x="438" y="40" fill="#a69c8f" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="1">FOUNDRY</text>
+        <text x="438" y="55" fill="#5a5047" font-family="JetBrains Mono, monospace" font-size="10">overseas in Phase 1</text>
+        <!-- route -->
+        <path id="jRoute" d="M452 266 C 470 170 450 100 400 62 C 300 10 150 30 82 108 C 150 340 350 330 446 272" fill="none" stroke="#5a5047" stroke-width="2" stroke-dasharray="2 7" stroke-linecap="round"/>
+        <path id="jTrail" d="M452 266 C 470 170 450 100 400 62 C 300 10 150 30 82 108 C 150 340 350 330 446 272" fill="none" stroke="#e28a4d" stroke-width="2.500" stroke-dasharray="3 7" stroke-linecap="round" opacity="0"/>
+        <g class="stop" data-s="0"><circle cx="452" cy="268" r="13"/><text x="452" y="273">1</text></g>
+        <g class="stop" data-s="1"><circle cx="400" cy="72" r="13"/><text x="400" y="77">2</text></g>
+        <g class="stop" data-s="2"><circle cx="78" cy="116" r="13"/><text x="78" y="121">3</text></g>
+        <g class="stop" data-s="3"><circle cx="424" cy="286" r="13"/><text x="424" y="291">4</text></g>
+        <g id="jChip" transform="translate(452 266)">
+          <rect x="-11" y="-11" width="22" height="22" rx="4" fill="#f3ede4" stroke="#e28a4d" stroke-width="2"/>
+          <rect x="-5" y="-5" width="10" height="10" rx="1.500" fill="#e28a4d"/>
+          <path d="M-5-14v3M0-14v3M5-14v3M-5 11v3M0 11v3M5 11v3M-14-5h3M-14 0h3M-14 5h3M11-5h3M11 0h3M11 5h3" stroke="#e28a4d" stroke-width="1.500" stroke-linecap="round"/>
+        </g>
+      </svg>
+      <ol class="jsteps" id="jsteps">
+        <li><span class="k">1 · DESIGN</span><b>Anywhere</b>A team in Kuching, Kota Kinabalu or Kuala Lumpur uploads a layout file.</li>
+        <li><span class="k">2 · FAB</span><b>Foundry</b>The shared chip is manufactured on a wafer.</li>
+        <li><span class="k">3 · PACKAGING &amp; TEST</span><b>Penang</b>Wafers are cut, packaged and tested here.</li>
+        <li><span class="k">4 · DELIVERED</span><b>Back to you</b>Each customer receives their own chips.</li>
+      </ol>
+      <div class="j-foot">
+        <span class="mono" style="font-size:12px;color:var(--muted)">Stylised map, not to scale.</span>
+        <button class="btn btn-ghost btn-sm" type="button" id="jReplay">Replay journey</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" aria-labelledby="h-pricing">
+  <div class="wrap">
+    <div class="sec-head" data-reveal>
+      <div class="eyebrow">Pricing</div>
+      <h2 id="h-pricing">Pay for a tile, not a whole wafer.</h2>
+      <p>Prices are in Malaysian ringgit. Pick the side that fits you.</p>
+    </div>
+    <fieldset class="seg" id="seg" data-reveal>
+      <legend>Choose a price list</legend>
+      <span class="thumb" aria-hidden="true"></span>
+      <input type="radio" name="aud" id="aud-edu" value="edu" checked>
+      <label for="aud-edu" id="lab-edu">Universities &amp; TVET</label>
+      <input type="radio" name="aud" id="aud-com" value="com">
+      <label for="aud-com" id="lab-com">Commercial</label>
+    </fieldset>
+    <div class="plans" id="plans" aria-live="polite" data-reveal></div>
+  </div>
+</section>
+
+<!-- COMPARE -->
+<section id="compare" aria-labelledby="h-compare">
+  <div class="wrap">
+    <div class="sec-head" data-reveal>
+      <div class="eyebrow">Why us</div>
+      <h2 id="h-compare">Between a hobby shuttle and a full commercial run.</h2>
+      <p>Hobby shuttles are cheap but public. Commercial multi-project wafers (MPW) are private but priced for funded teams. We sit in the gap.</p>
+    </div>
+    <div class="tbl" data-reveal tabindex="0" role="region" aria-label="Comparison table, scrolls sideways on small screens">
+      <table>
+        <thead><tr><th scope="col"><span class="sr">Feature</span></th><th scope="col">Hobby shuttles</th><th scope="col">Commercial MPW</th><th scope="col" class="us">SiliconKongsi</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Private IP</th><td><span class="x" aria-label="No">✗</span>Open source required</td><td><span class="y" aria-label="Yes">✓</span>Under NDA</td><td class="us"><span class="y" aria-label="Yes">✓</span>NDA-protected</td></tr>
+          <tr><th scope="row">Price per prototype</th><td>Lowest</td><td>High, with minimum area fees</td><td class="us">From RM2,500 per tile</td></tr>
+          <tr><th scope="row">Mixed-size designs</th><td><span class="x" aria-label="No">✗</span>Fixed small tiles</td><td><span class="y" aria-label="Yes">✓</span>Priced by area</td><td class="us"><span class="y" aria-label="Yes">✓</span>Small tiles to a dedicated die</td></tr>
+          <tr><th scope="row">AI pre-check before fab</th><td><span class="x" aria-label="No">✗</span>Standard rule checks</td><td><span class="x" aria-label="No">✗</span>Your own sign-off</td><td class="us"><span class="y" aria-label="Yes">✓</span>Plain-English report</td></tr>
+          <tr><th scope="row">Local packaging &amp; test</th><td><span class="x" aria-label="No">✗</span>Shipped from abroad</td><td><span class="x" aria-label="No">✗</span>Arranged separately</td><td class="us"><span class="y" aria-label="Yes">✓</span>Penang</td></tr>
+          <tr><th scope="row">Malaysian fab roadmap</th><td><span class="x" aria-label="No">✗</span></td><td><span class="x" aria-label="No">✗</span></td><td class="us"><span class="y" aria-label="Yes">✓</span>Planned, Phase 2</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section id="roadmap" aria-labelledby="h-roadmap">
+  <div class="wrap">
+    <div class="sec-head" data-reveal>
+      <div class="eyebrow">Roadmap</div>
+      <h2 id="h-roadmap">Start with what works today. Bring the rest home.</h2>
+    </div>
+    <div class="road" data-reveal>
+      <div class="ph3 now">
+        <div class="lab">Phase 1 <span class="chip-tag">Starting point</span></div>
+        <h3>Open-source processes abroad, packaging &amp; test in Penang</h3>
+        <p>Shuttles run on open-source manufacturing processes at overseas foundries. Every chip is packaged and tested in Penang.</p>
+      </div>
+      <div class="ph3">
+        <div class="lab">Phase 2 <span class="chip-tag">Planned</span></div>
+        <h3>Malaysian fab shuttles</h3>
+        <p>Move shuttle runs to fabs in Malaysia, so a design can go from layout to packaged part without leaving the country.</p>
+      </div>
+      <div class="ph3">
+        <div class="lab">Phase 3 <span class="chip-tag">Later</span></div>
+        <h3>ASEAN expansion</h3>
+        <p>Open the shuttle to universities and companies across Southeast Asia.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" aria-labelledby="h-faq">
+  <div class="wrap">
+    <div class="sec-head" data-reveal>
+      <div class="eyebrow">FAQ</div>
+      <h2 id="h-faq">Questions we expect.</h2>
+    </div>
+    <div class="faq" data-reveal>
+      <details open>
+        <summary>Can my design stay private?</summary>
+        <p>Yes. Commercial designs are covered by an NDA. Your layout is not published, and the public shuttle map shows your area only as a private design. Student tiles are open source, which keeps them at the lowest price.</p>
+      </details>
+      <details>
+        <summary>Which processes do you use?</summary>
+        <p>We start on 130 nm with an open process design kit (PDK). Open means the manufacturing rules are public, so anyone can design for it without foundry paperwork first. More processes follow as the roadmap moves to Malaysian fabs.</p>
+      </details>
+      <details>
+        <summary>What file do I submit?</summary>
+        <p>A GDS layout file, the standard format every chip design tool can export. It does not matter whether you made it with open-source or commercial tools. You also tell us which pins your design needs, and the stitching engine assigns them on the shared chip.</p>
+      </details>
+      <details>
+        <summary>How long until I get chips?</summary>
+        <p>Plan for roughly six to nine months after a shuttle closes. Fabrication takes most of that time. Packaging and test in Penang come last, and the shuttle tracker shows progress throughout.</p>
+      </details>
+      <details>
+        <summary>Can universities claim this from training budgets?</summary>
+        <p>We issue itemised quotations and invoices that separate tiles, workshops and support, so your institution can submit them against its own training or grant budget. Whether a claim is accepted depends on your funder's rules, so check with your finance office before you commit.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="demo" aria-labelledby="h-demo">
+  <div class="wrap">
+    <div class="cta-box" data-reveal>
+      <div>
+        <h2 id="h-demo">Get a seat on the next shuttle.</h2>
+        <p class="lead">Book a 20-minute demo. We run the pre-check on your own layout and price up your tile.</p>
+      </div>
+      <div>
+        <form id="demoForm">
+          <label for="email">Work or university email</label>
+          <div class="row">
+            <input type="email" id="email" name="email" required autocomplete="email" placeholder="you@company.my">
+            <button class="btn btn-primary" type="submit">Book a demo</button>
+          </div>
+          <small>Front-end demo form. Nothing is stored or sent.</small>
+        </form>
+        <div class="ok" id="ok" role="status" aria-live="polite" tabindex="-1"><b>Thanks, you're on the list.</b><span id="okMsg"></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <a class="logo" href="#top" style="font-size:17px;color:var(--text)"><span>Silicon<b>Kongsi</b></span></a>
+    <span class="mono">Concept demo for SPARK 2026. Prices indicative. Shuttle data is illustrative.</span>
+  </div>
+</footer>
+
+<script>
+/* ============================================================
+   CONFIG: edit prices, plan names, features and demo numbers here.
+   ============================================================ */
+const CONFIG = {
+  brand: "SiliconKongsi",
+  shuttle: {
+    name: "SK-26C",
+    process: "130 nm open PDK",
+    deadlineDays: 45,      // days from today
+    areaFilledPct: 68      // % of the 10 x 10 chip map already taken
+  },
+  costSlider: {
+    runCost: 250000,       // RM, indicative cost of booking the whole chip yourself
+    maxDesigns: 100        // runCost / maxDesigns = the Student Tile price
+  },
+  precheck: {
+    rules: 1204,
+    warning: "Metal spacing too tight near pin 3 — suggested fix applied",
+    sampleFile: "sample_counter.gds"
+  },
+  pricing: {
+    edu: {
+      label: "Universities & TVET",
+      plans: [
+        { name: "Student Tile", who: "For a single student or project team",
+          prefix: "", price: "RM2,500", unit: "per tile", popular: false, cta: "Submit a design", href: "#upload",
+          features: ["Shared shuttle", "Open-source design", "AI pre-check", "Packaged chip + test board"] },
+        { name: "Faculty Cohort", who: "For a course or a whole cohort",
+          prefix: "", price: "RM80,000", unit: "per year", popular: true, cta: "Book a demo", href: "#demo",
+          features: ["Bulk tiles for a whole cohort", "Submission dashboard", "Teaching materials", "Priority support"] },
+        { name: "National Programme", who: "For ministries and multi-campus networks",
+          prefix: "", price: "Contact us", unit: "", popular: false, cta: "Talk to us", href: "#demo",
+          features: ["Multi-campus rollout", "Dedicated shuttles", "Trainer workshops"] }
+      ]
+    },
+    com: {
+      label: "Commercial",
+      plans: [
+        { name: "Prototype Tile", who: "For a first private prototype",
+          prefix: "from", price: "RM6,000", unit: "per tile", popular: false, cta: "Submit a design", href: "#upload",
+          features: ["Private NDA-protected design", "AI pre-check", "Penang packaging & test report"] },
+        { name: "Startup Shuttle Pass", who: "For startups and SMEs shipping regularly",
+          prefix: "", price: "RM1,500", unit: "per month", popular: true, cta: "Book a demo", href: "#demo",
+          features: ["Guaranteed slot on every shuttle", "Private designs", "Mixed-size designs", "Priority pre-checks"] },
+        { name: "Dedicated Die", who: "For products that outgrow a tile",
+          prefix: "", price: "Contact us", unit: "", popular: false, cta: "Talk to us", href: "#demo",
+          features: ["Larger custom die area", "Multiple shuttles", "Engineering support"] }
+      ]
+    }
+  }
+};
+
+const $ = (s, r = document) => r.querySelector(s);
+const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const rm = n => "RM" + Math.round(n).toLocaleString("en-US");
+const pad = v => String(v).padStart(2, "0");
+function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+/* ---------- nav ---------- */
+(() => {
+  const btn = $("#menuBtn"), links = $("#navLinks");
+  const set = o => { links.classList.toggle("open", o); btn.setAttribute("aria-expanded", o); btn.setAttribute("aria-label", o ? "Close menu" : "Open menu"); };
+  btn.addEventListener("click", () => set(!links.classList.contains("open")));
+  links.addEventListener("click", e => { if (e.target.tagName === "A") set(false); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") set(false); });
+})();
+
+/* ---------- hero zoom: wafer -> chip -> tiles -> gates ---------- */
+(() => {
+  const NS = "http://www.w3.org/2000/svg";
+  const CAPS = [
+    ["×1", "One wafer", "A foundry makes chips on a silicon disc, hundreds at a time."],
+    ["×1", "One shared chip", "We book a single chip on that wafer for everyone."],
+    ["×100", "100 designs", "The chip is divided into tiles. Each customer rents only the area they need."],
+    ["×1", "Yours", "Your own logic gates and wires on real silicon, at a fraction of the cost."]
+  ];
+  const DIE = { x: 567, y: 375, s: 58 }, PITCH = 5.4, TS = 4.8, M = 2.3, TC = 6, TR = 3;
+  const chipC = [DIE.x + DIE.s / 2, DIE.y + DIE.s / 2];
+  const tileXY = [DIE.x + M + TC * PITCH, DIE.y + M + TR * PITCH];
+  const tileC = [tileXY[0] + TS / 2, tileXY[1] + TS / 2];
+  const SIZES = [1060, 190, 62, 6.2], CENTERS = [[500, 500], chipC, chipC, tileC];
+
+  function build(svg, uid) {
+    const mk = (n, a, p) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); (p || svg).appendChild(e); return e; };
+    const defs = mk("defs", {});
+    const g = mk("radialGradient", { id: "wg" + uid, cx: "38%", cy: "30%", r: "80%" }, defs);
+    mk("stop", { offset: "0", "stop-color": "#2a2420" }, g); mk("stop", { offset: "1", "stop-color": "#12100e" }, g);
+    mk("circle", { cx: 500, cy: 500, r: 472, fill: "url(#wg" + uid + ")", stroke: "#5a5047", "stroke-width": 1.5, "vector-effect": "non-scaling-stroke" });
+    mk("rect", { x: 440, y: 962, width: 120, height: 14, fill: "#0a0908" }); // wafer flat
+    const dies = mk("g", { fill: "#1d1a17", stroke: "#3a332d", "stroke-width": 1, "vector-effect": "non-scaling-stroke" });
+    for (let i = -8; i < 8; i++) for (let j = -8; j < 8; j++) {
+      const x = 500 + i * 64 + 3, y = 500 + j * 64 + 3;
+      if (x === DIE.x && y === DIE.y) continue;
+      const far = Math.max(...[[x, y], [x + 58, y], [x, y + 58], [x + 58, y + 58]].map(p => Math.hypot(p[0] - 500, p[1] - 500)));
+      if (far < 452) mk("rect", { x, y, width: 58, height: 58, rx: 3, "vector-effect": "non-scaling-stroke" }, dies);
+    }
+    mk("rect", { x: DIE.x, y: DIE.y, width: DIE.s, height: DIE.s, rx: 3, fill: "#0d0b0a", stroke: "#e28a4d", "stroke-width": 2, "vector-effect": "non-scaling-stroke" });
+    const pulse = mk("rect", { x: DIE.x + 14, y: DIE.y + 14, width: 30, height: 30, rx: 3, fill: "#e28a4d" });
+    const tiles = mk("g", {}), r = rng(5), cols = ["#e28a4d", "#e28a4d", "#e9decd", "#8f5d3c", "#c9783f"];
+    for (let rr = 0; rr < 10; rr++) for (let c = 0; c < 10; c++) {
+      if (c === TC && rr === TR) continue;
+      mk("rect", { x: DIE.x + M + c * PITCH, y: DIE.y + M + rr * PITCH, width: TS, height: TS, rx: .5, fill: cols[Math.floor(r() * cols.length)], opacity: (.55 + r() * .45).toFixed(2) }, tiles);
+    }
+    mk("rect", { x: tileXY[0], y: tileXY[1], width: TS, height: TS, rx: .5, fill: "#0d0b0a", stroke: "#e28a4d", "stroke-width": 2, "vector-effect": "non-scaling-stroke" }, tiles);
+    const gates = mk("g", { transform: "translate(" + tileXY[0] + " " + tileXY[1] + ") scale(" + TS / 1000 + ")" });
+    const W = ["M0 230H260", "M0 290H260", "M0 590H280", "M0 650H280", "M400 260H500V360H600", "M420 620H500V420H600", "M740 390H1000", "M500 620V755H560", "M694 755H1000"];
+    gates.innerHTML =
+      '<g fill="none" stroke="#8f5d3c" stroke-width="9" stroke-linecap="round" stroke-linejoin="round">' + W.map(d => '<path d="' + d + '"/>').join("") + "</g>" +
+      '<g fill="none" stroke="#ffb27a" stroke-width="9" stroke-linecap="round" stroke-linejoin="round">' + W.map(d => '<path class="wire" d="' + d + '"/>').join("") + "</g>" +
+      '<g fill="#1b1816" stroke="#f3ede4" stroke-width="8" stroke-linejoin="round">' +
+        '<path d="M260 200h80a60 60 0 010 120h-80z"/>' +
+        '<path d="M260 560c50 0 110 10 160 60c-50 50-110 60-160 60c25-40 25-80 0-120z"/>' +
+        '<path d="M600 330h80a60 60 0 010 120h-80z"/>' +
+        '<path d="M560 700l110 55l-110 55z"/><circle cx="682" cy="755" r="12"/>' +
+      "</g>" +
+      '<circle cx="500" cy="620" r="13" fill="#ffb27a"/>' +
+      '<g fill="#a69c8f" font-family="JetBrains Mono, monospace" font-size="34" font-weight="700">' +
+        '<text x="286" y="272">AND</text><text x="300" y="632">OR</text><text x="626" y="402">AND</text><text x="552" y="868">NOT</text>' +
+        '<text x="40" y="120" fill="#e28a4d" letter-spacing="4">YOUR DESIGN</text>' +
+      "</g>";
+    return { svg, tiles, gates, pulse };
+  }
+
+  function view(p, L) {            // L is a float level 0..3
+    const i = Math.min(2, Math.floor(L)), f = L - i;
+    const g = f * f * (3 - 2 * f);
+    const s0 = SIZES[i], s1 = SIZES[i + 1], size = s0 * Math.pow(s1 / s0, g);
+    const k = (size - s1) / (s0 - s1);
+    const cx = CENTERS[i + 1][0] + (CENTERS[i][0] - CENTERS[i + 1][0]) * k;
+    const cy = CENTERS[i + 1][1] + (CENTERS[i][1] - CENTERS[i + 1][1]) * k;
+    p.svg.setAttribute("viewBox", (cx - size / 2) + " " + (cy - size / 2) + " " + size + " " + size);
+    const to = clamp((420 - size) / 260);
+    p.tiles.style.opacity = to; p.pulse.style.opacity = 1 - to;
+    const go = clamp((26 - size) / 14);
+    p.gates.style.display = go > 0 ? "" : "none"; p.gates.style.opacity = go;
+  }
+
+  const sec = $("#zoom"), caps = $("#caps");
+  if (reduce) {
+    sec.classList.add("static");
+    const fr = $("#frames");
+    CAPS.forEach((c, i) => {
+      const fig = document.createElement("figure"), s = document.createElementNS(NS, "svg");
+      s.setAttribute("role", "img"); s.setAttribute("aria-label", c[1]);
+      fig.appendChild(s);
+      const cap = document.createElement("figcaption"); cap.innerHTML = "<b>" + esc(c[1]) + "</b>" + esc(c[2]); fig.appendChild(cap);
+      fr.appendChild(fig); view(build(s, "f" + i), i);
+    });
+    return;
+  }
+  caps.innerHTML = CAPS.map(c => '<li><span class="k">' + c[0] + "</span><b>" + c[1] + '</b><span class="d">' + c[2] + "</span></li>").join("");
+  const items = [...caps.children], parts = build($("#zoomSvg"), "m"), sticky = $(".zoom-sticky"), hint = $("#zoomHint"), dots = [...$("#zdots").children];
+  let ticking = false, lastOn = -1;
+  const update = () => {
+    ticking = false;
+    const total = sec.offsetHeight - sticky.offsetHeight;
+    const p = total > 0 ? clamp((64 - sec.getBoundingClientRect().top) / total) : 0;
+    // each third of the scroll: hold, travel, hold
+    const x = p * 3, i = Math.min(2, Math.floor(x)), f = clamp((x - i - .12) / .76);
+    const L = Math.min(3, i + f);
+    view(parts, L);
+    const on = Math.round(L);
+    if (on !== lastOn) { items.forEach((li, k) => li.classList.toggle("on", k === on)); dots.forEach((d, k) => d.classList.toggle("on", k <= on)); lastOn = on; }
+    hint.style.opacity = p < .02 ? 1 : 0;
+  };
+  const req = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+  addEventListener("scroll", req, { passive: true }); addEventListener("resize", req);
+  update();
+})();
+
+/* ---------- cost slider ---------- */
+(() => {
+  const C = CONFIG.costSlider, box = $("#split"), rngEl = $("#costRng"), priceEl = $("#costPrice"), eq = $("#costEq");
+  const maxK = Math.round(Math.sqrt(C.maxDesigns)); rngEl.max = maxK;
+  let shown = C.runCost / C.maxDesigns, raf = 0, touched = false;
+  const tween = target => {
+    cancelAnimationFrame(raf);
+    if (reduce) { shown = target; priceEl.textContent = rm(target); return; }
+    const from = shown, t0 = performance.now();
+    const step = t => { const k = clamp((t - t0) / 350), e = 1 - Math.pow(1 - k, 3); shown = from + (target - from) * e; priceEl.textContent = rm(shown); if (k < 1) raf = requestAnimationFrame(step); };
+    raf = requestAnimationFrame(step);
+  };
+  const render = () => {
+    const k = +rngEl.value, n = k * k, price = C.runCost / n;
+    box.style.gridTemplateColumns = "repeat(" + k + ",1fr)"; box.style.gridTemplateRows = "repeat(" + k + ",1fr)";
+    box.style.gap = k > 6 ? "3px" : "5px";
+    let h = ""; for (let i = 0; i < n; i++) h += i === 0 ? '<i class="me"></i>' : "<i></i>"; box.innerHTML = h;
+    tween(price);
+    eq.innerHTML = "<b>" + rm(C.runCost) + "</b> for the whole chip ÷ <b>" + n + "</b> " + (n === 1 ? "design (yours alone)" : "designs sharing it");
+    rngEl.style.setProperty("--fill", ((k - 1) / (maxK - 1) * 100) + "%");
+    rngEl.setAttribute("aria-valuetext", n === 1 ? "Your own run, " + rm(price) : "Sharing with " + (n - 1) + " others, " + rm(price) + " per tile");
+  };
+  rngEl.addEventListener("input", () => { touched = true; render(); });
+  ["pointerdown", "keydown"].forEach(ev => rngEl.addEventListener(ev, () => touched = true));
+  rngEl.value = maxK; render(); priceEl.textContent = rm(C.runCost / C.maxDesigns);
+  // play the story once when it scrolls into view: alone -> shared
+  if (!reduce && "IntersectionObserver" in window) {
+    const io = new IntersectionObserver(es => {
+      if (!es[0].isIntersecting) return; io.disconnect();
+      rngEl.value = 1; shown = C.runCost; render();
+      let k = 1; const iv = setInterval(() => { if (touched || k >= maxK) return clearInterval(iv); rngEl.value = ++k; render(); }, 330);
+    }, { threshold: .6 });
+    io.observe(box);
+  }
+})();
+
+/* ---------- exploded 3D chip ---------- */
+(() => {
+  const sc = $("#scene"), wrap = $("#x3d");
+  if (reduce) { sc.classList.add("open"); sc.setAttribute("aria-pressed", "true"); $("#sceneHint").textContent = "Layers shown pulled apart"; }
+  sc.addEventListener("click", () => { const o = sc.classList.toggle("open"); sc.setAttribute("aria-pressed", o); });
+  if ("IntersectionObserver" in window) new IntersectionObserver(es => wrap.classList.toggle("paused", !es[0].isIntersecting)).observe(wrap);
+})();
+
+/* ---------- shuttle tracker (mixed tile sizes) ---------- */
+const Tracker = (() => {
+  const S = CONFIG.shuttle, r = rng(2026), N = 10;
+  $("#shName").textContent = S.name; $("#shProc").textContent = S.process;
+  const dl = new Date(); dl.setHours(23, 59, 59, 0); dl.setDate(dl.getDate() + S.deadlineDays);
+  $("#shDate").textContent = dl.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+  const tick = () => {
+    let s = Math.max(0, Math.floor((dl - Date.now()) / 1000));
+    $("#cdD").textContent = Math.floor(s / 86400); s %= 86400;
+    $("#cdH").textContent = pad(Math.floor(s / 3600)); s %= 3600;
+    $("#cdM").textContent = pad(Math.floor(s / 60)); $("#cdS").textContent = pad(s % 60);
+  };
+  tick(); setInterval(tick, 1000);
+
+  const uni = ["8-bit RISC core", "UART + SPI bridge", "PWM motor driver", "LFSR test chip", "16-tap FIR filter", "CORDIC engine", "Ring oscillator array", "I2C sensor hub", "VGA pattern generator", "Tiny RISC-V core", "AES-128 round core", "Temperature sensor readout", "Morse code decoder", "Booth multiplier", "Digital PLL", "Stopwatch chip", "Hamming code ECC", "Traffic light controller", "Pong on a chip", "Gamelan tone generator"];
+  // pack row by row: at each free cell pick the largest random size that fits
+  const occ = Array.from({ length: N }, () => Array(N).fill(false)), tiles = [];
+  const free = (c, rr, w, h) => { if (c + w > N || rr + h > N) return false; for (let y = rr; y < rr + h; y++) for (let x = c; x < c + w; x++) if (occ[y][x]) return false; return true; };
+  const mark = (c, rr, w, h) => { for (let y = rr; y < rr + h; y++) for (let x = c; x < c + w; x++) occ[y][x] = true; };
+  let area = 0; const target = clamp(S.areaFilledPct, 0, 96);
+  outer: for (let rr = 0; rr < N; rr++) for (let c = 0; c < N; c++) {
+    if (occ[rr][c]) continue; if (area >= target) break outer;
+    const v = r(); let w = 1, h = 1;
+    if (v < .17 && free(c, rr, 2, 2) && area + 4 <= target) { w = 2; h = 2; }
+    else if (v < .47 && free(c, rr, 2, 1) && area + 2 <= target) { w = 2; }
+    const t = r();
+    const type = w * h === 4 ? (t < .55 ? "SME" : "Startup") : w * h === 2 ? (t < .55 ? "Startup" : t < .85 ? "SME" : "University") : (t < .8 ? "University" : "Startup");
+    mark(c, rr, w, h); area += w * h;
+    tiles.push({ c, r: rr, w, h, type, priv: type !== "University", name: uni[Math.floor(r() * uni.length)] });
+  }
+  // the visitor's slot: first free 2x1 space after the packed designs
+  let slot = null;
+  find: for (let rr = 0; rr < N; rr++) for (let c = 0; c < N - 1; c++) if (free(c, rr, 2, 1)) { slot = { c, r: rr, w: 2, h: 1, slot: true }; mark(c, rr, 2, 1); break find; }
+  if (slot) tiles.push(slot);
+
+  const map = $("#map"), tip = $("#tip"), wrap = $("#mapWrap");
+  const idOf = t => "T-" + pad(t.r + 1) + "-" + pad(t.c + 1), sizeOf = t => t.w + "×" + t.h;
+  const place = (el, t) => { el.style.gridColumn = (t.c + 1) + " / span " + t.w; el.style.gridRow = (t.r + 1) + " / span " + t.h; };
+  const label = t => t.slot ? (t.mine ? t.mine + ", shipping on " + S.name : "Free space, next in line") : (t.priv ? "Private design" : t.name) + ", " + t.type;
+  tiles.sort((a, b) => a.r - b.r || a.c - b.c);
+  const btns = tiles.map((t, i) => {
+    const b = document.createElement("button"); b.type = "button"; b.tabIndex = i === 0 ? 0 : -1; b.dataset.i = i;
+    b.className = "t " + (t.slot ? "slot" : (t.type === "University" ? "uni" : t.type === "Startup" ? "startup" : "sme") + (t.priv ? " priv" : ""));
+    if (t.slot) { b.id = "slotTile"; b.textContent = "NEXT"; }
+    b.setAttribute("aria-label", idOf(t) + ", size " + sizeOf(t) + ": " + label(t));
+    place(b, t); map.appendChild(b); return b;
+  });
+  for (let rr = 0; rr < N; rr++) for (let c = 0; c < N; c++) if (!occ[rr][c]) { const e = document.createElement("span"); e.className = "e"; e.setAttribute("aria-hidden", "true"); place(e, { c, r: rr, w: 1, h: 1 }); map.appendChild(e); }
+
+  const show = b => {
+    const t = tiles[+b.dataset.i];
+    tip.innerHTML = '<div class="id">' + idOf(t) + " · " + sizeOf(t) + "</div>" + (t.slot
+      ? '<div class="nm">' + (t.mine ? esc(t.mine) : "Free space") + '</div><div class="ow">' + (t.mine ? "Shipping on " + esc(S.name) : "Next design goes here") + "</div>"
+      : '<div class="nm">' + (t.priv ? "🔒 Private design" : esc(t.name)) + '</div><div class="ow">' + t.type + "</div>");
+    const W = wrap.clientWidth, tw = tip.offsetWidth, th = tip.offsetHeight;
+    let x = b.offsetLeft + b.offsetWidth / 2 - tw / 2, y = b.offsetTop - th - 10;
+    x = Math.max(4, Math.min(x, W - tw - 4)); if (y < 4) y = b.offsetTop + b.offsetHeight + 10;
+    tip.style.left = x + "px"; tip.style.top = y + "px"; tip.classList.add("show");
+  };
+  const hide = () => tip.classList.remove("show");
+  map.addEventListener("pointerover", e => { if (e.target.dataset.i) show(e.target); });
+  map.addEventListener("pointerleave", hide);
+  map.addEventListener("click", e => { if (e.target.dataset.i) show(e.target); });
+  map.addEventListener("focusin", e => { if (e.target.dataset.i) show(e.target); });
+  map.addEventListener("focusout", hide);
+  map.addEventListener("keydown", e => {
+    const i = +e.target.dataset.i; if (Number.isNaN(i)) return;
+    if (e.key === "Escape") return hide();
+    const d = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key]; if (!d) return;
+    const j = i + d; if (j < 0 || j >= btns.length) return;
+    e.preventDefault(); btns[i].tabIndex = -1; btns[j].tabIndex = 0; btns[j].focus();
+  });
+
+  const bar = $("#fillBar"), setFill = v => { $("#fillN").textContent = v; bar.setAttribute("aria-valuenow", v); bar.firstElementChild.style.width = v + "%"; };
+  $("#fillN").textContent = area; bar.setAttribute("aria-valuenow", area);
+  requestAnimationFrame(() => setTimeout(() => setFill(area), 150));
+
+  return {
+    slotEl: () => $("#slotTile"),
+    claim(owner) {
+      if (!slot) return;
+      const el = $("#slotTile"); slot.mine = owner;
+      el.className = "t mine"; el.textContent = "YOU";
+      el.setAttribute("aria-label", idOf(slot) + ", size 2×1: " + label(slot));
+      const ml = $("#mineLabel"); ml.textContent = owner + " — shipping on " + S.name; ml.classList.add("show");
+      setFill(area + 2);
+    }
+  };
+})();
+
+/* ---------- upload demo ---------- */
+(() => {
+  const P = CONFIG.precheck, term = $("#term"), drop = $("#drop"), fileIn = $("#fileIn"), nameIn = $("#yourName");
+  let busy = false;
+  const wait = ms => new Promise(r => setTimeout(r, reduce ? 0 : ms));
+  const line = (cls, html) => { const d = document.createElement("div"); d.className = "ln " + cls; d.innerHTML = html; term.appendChild(d); return d; };
+
+  async function run(file) {
+    if (busy) return; busy = true;
+    const nm = nameIn.value.trim(), owner = nm ? nm + "'s design" : "Your design";
+    term.querySelectorAll(".ln,.pbar,.idle").forEach(n => n.remove());
+    line("dim", "› received " + esc(file));
+    await wait(450);
+    const head = line("", "Checking " + P.rules.toLocaleString("en-US") + " design rules…");
+    const pb = document.createElement("div"); pb.className = "pbar"; pb.innerHTML = "<i></i>"; term.appendChild(pb);
+    const cnt = line("dim", "0 / " + P.rules.toLocaleString("en-US"));
+    let warned = false;
+    const dur = reduce ? 0 : 2600, t0 = performance.now();
+    await new Promise(res => {
+      const step = t => {
+        const k = dur ? clamp((t - t0) / dur) : 1;
+        pb.firstElementChild.style.width = (k * 100) + "%";
+        cnt.textContent = Math.round(k * P.rules).toLocaleString("en-US") + " / " + P.rules.toLocaleString("en-US");
+        if (k > .5 && !warned) { warned = true; const w = document.createElement("div"); w.className = "ln warn"; w.innerHTML = "<small>Plain-English note</small>" + esc(P.warning); term.appendChild(w); }
+        k < 1 ? requestAnimationFrame(step) : res();
+      };
+      requestAnimationFrame(step);
+    });
+    head.textContent = "Checked " + P.rules.toLocaleString("en-US") + " design rules";
+    await wait(300);
+    line("pass", "✓ Passed — 0 errors");
+    await wait(1000);
+    line("dim", "› stitching onto " + esc(CONFIG.shuttle.name) + "…");
+    await wait(500);
+    await fly(owner);
+    line("", esc(owner) + " — shipping on " + esc(CONFIG.shuttle.name));
+    busy = false;
+  }
+
+  async function fly(owner) {
+    const slot = Tracker.slotEl(); if (!slot) return;
+    $("#mapWrap").scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
+    if (reduce || !slot.animate) { Tracker.claim(owner); return; }
+    await wait(950);
+    const b = slot.getBoundingClientRect(), g = document.createElement("div");
+    g.className = "ghost"; g.style.width = b.width + "px"; g.style.height = b.height + "px";
+    document.body.appendChild(g);
+    const sx = innerWidth / 2 - b.width / 2, sy = -b.height - 20;
+    await g.animate([
+      { transform: "translate(" + sx + "px," + sy + "px) scale(2.2) rotate(-8deg)", opacity: .2 },
+      { transform: "translate(" + (b.left + (sx - b.left) * .25) + "px," + (b.top - 70) + "px) scale(1.5) rotate(3deg)", opacity: 1, offset: .7 },
+      { transform: "translate(" + b.left + "px," + b.top + "px) scale(1) rotate(0)", opacity: 1 }
+    ], { duration: 1300, easing: "cubic-bezier(.3,.7,.2,1)", fill: "forwards" }).finished;
+    Tracker.claim(owner); g.remove();
+  }
+
+  $("#sampleBtn").addEventListener("click", () => run(P.sampleFile));
+  $("#pickBtn").addEventListener("click", () => fileIn.click());
+  fileIn.addEventListener("change", () => { if (fileIn.files[0]) run(fileIn.files[0].name); fileIn.value = ""; });
+  ["dragenter", "dragover"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add("over"); }));
+  ["dragleave", "drop"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove("over"); }));
+  drop.addEventListener("drop", e => { const f = e.dataTransfer && e.dataTransfer.files[0]; run(f ? f.name : P.sampleFile); });
+  nameIn.addEventListener("keydown", e => { if (e.key === "Enter") run(P.sampleFile); });
+})();
+
+/* ---------- Malaysia journey ---------- */
+(() => {
+  const route = $("#jRoute"), trail = $("#jTrail"), chip = $("#jChip"), stops = [...document.querySelectorAll("#jmap .stop")], steps = [...$("#jsteps").children];
+  const len = route.getTotalLength();
+  // where along the route each stop sits
+  const pts = [[452, 266], [400, 62], [82, 108], [446, 272]];
+  const at = pts.map((p, i) => {
+    if (i === 0) return 0; if (i === 3) return len;
+    let best = 0, bd = 1e9; for (let s = 0; s <= 400; s++) { const q = route.getPointAtLength(len * s / 400), d = Math.hypot(q.x - p[0], q.y - p[1]); if (d < bd) { bd = d; best = len * s / 400; } } return best;
+  });
+  // solid mask so the dotted trail is revealed as the chip travels
+  const NS = "http://www.w3.org/2000/svg", mask = document.createElementNS(NS, "mask"), mp = document.createElementNS(NS, "path");
+  mask.id = "jMask"; mask.setAttribute("maskUnits", "userSpaceOnUse"); mask.setAttribute("x", 0); mask.setAttribute("y", 0); mask.setAttribute("width", 800); mask.setAttribute("height", 330);
+  mp.setAttribute("d", route.getAttribute("d")); mp.setAttribute("fill", "none"); mp.setAttribute("stroke", "#fff"); mp.setAttribute("stroke-width", 8);
+  mp.setAttribute("stroke-dasharray", len); mask.appendChild(mp); $("#jmap").insertBefore(mask, $("#jmap").firstChild);
+  trail.setAttribute("mask", "url(#jMask)"); trail.setAttribute("opacity", 1);
+  const set = d => {
+    const q = route.getPointAtLength(d); chip.setAttribute("transform", "translate(" + q.x.toFixed(1) + " " + q.y.toFixed(1) + ")");
+    mp.setAttribute("stroke-dashoffset", len - d);
+    at.forEach((a, i) => { const on = d >= a - 1; stops[i].classList.toggle("on", on); steps[i].classList.toggle("on", on); });
+  };
+  let raf = 0;
+  const play = () => {
+    cancelAnimationFrame(raf);
+    if (reduce) return set(len);
+    // travel segment by segment with a short stop at each place
+    const segs = [[at[0], at[1]], [at[1], at[2]], [at[2], at[3]]], TR = 1900, HOLD = 650, t0 = performance.now();
+    const step = t => {
+      const e = t - t0, i = Math.min(2, Math.floor(e / (TR + HOLD))), k = clamp((e - i * (TR + HOLD)) / TR), ez = k * k * (3 - 2 * k);
+      set(segs[i][0] + (segs[i][1] - segs[i][0]) * ez);
+      if (e < 3 * (TR + HOLD) - HOLD) raf = requestAnimationFrame(step);
+    };
+    set(0); raf = requestAnimationFrame(step);
+  };
+  $("#jReplay").addEventListener("click", play);
+  if (reduce || !("IntersectionObserver" in window)) { set(len); return; }
+  set(0);
+  const io = new IntersectionObserver(es => { if (es[0].isIntersecting) { io.disconnect(); play(); } }, { threshold: .45 });
+  io.observe($("#jmap"));
+})();
+
+/* ---------- pricing ---------- */
+(() => {
+  const P = CONFIG.pricing, box = $("#plans"), seg = $("#seg");
+  $("#lab-edu").textContent = P.edu.label; $("#lab-com").textContent = P.com.label;
+  const render = key => {
+    seg.classList.toggle("right", key === "com");
+    box.innerHTML = P[key].plans.map(p =>
+      '<article class="plan' + (p.popular ? " pop" : "") + '">' +
+        (p.popular ? '<span class="badge">Most popular</span>' : "") +
+        "<div><h3>" + esc(p.name) + '</h3><p class="who">' + esc(p.who) + "</p></div>" +
+        '<div class="price">' + (p.prefix ? '<span class="from">' + esc(p.prefix) + "</span>" : "") +
+          '<span class="amt">' + esc(p.price) + "</span>" + (p.unit ? '<span class="unit">' + esc(p.unit) + "</span>" : "") + "</div>" +
+        "<ul>" + p.features.map(f => "<li><span>" + esc(f) + "</span></li>").join("") + "</ul>" +
+        '<a class="btn ' + (p.popular ? "btn-primary" : "btn-ghost") + '" href="' + esc(p.href) + '">' + esc(p.cta) + "</a>" +
+      "</article>").join("");
+  };
+  seg.addEventListener("change", e => render(e.target.value));
+  render("edu");
+})();
+
+/* ---------- demo form ---------- */
+$("#demoForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const v = $("#email").value.trim(), ok = $("#ok");
+  $("#okMsg").textContent = "We would reach you at " + v + " to schedule a demo. This is a concept form, so nothing was sent.";
+  e.target.hidden = true; ok.classList.add("show"); ok.focus();
+});
+
+/* ---------- scroll reveal ---------- */
+(() => {
+  if (reduce || !("IntersectionObserver" in window)) return;
+  const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { en.target.classList.remove("pre"); io.unobserve(en.target); } }), { rootMargin: "0px 0px -8% 0px" });
+  document.querySelectorAll("[data-reveal]").forEach(el => { if (el.getBoundingClientRect().top > innerHeight * .92) { el.classList.add("pre"); io.observe(el); } });
+})();
+</script>
+</body>
+</html>
