@@ -142,15 +142,21 @@ header.nav{position:sticky;top:0;z-index:50;background:rgba(0,0,0,.82);backdrop-
 @media (max-width:820px){.stats{grid-template-columns:1fr}}
 
 /* cost slider */
-.cost{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:48px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:36px}
+.cost{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:clamp(28px,4vw,48px);align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:36px}
 .split{display:grid;gap:3px;aspect-ratio:1;background:var(--bg);border:1px solid #3a3a3c;border-radius:14px;padding:12px;position:relative}
 .split i{display:block;background:var(--surface-2);border:1px solid #3a3a3c;border-radius:3px;min-width:0;min-height:0}
 .split i.me{background:var(--accent);border-color:var(--accent);box-shadow:0 0 18px rgba(41,151,255,.55)}
-.cost-r{display:flex;flex-direction:column;gap:22px;min-width:0}
-.cost-price{font-family:var(--display);font-weight:800;font-size:clamp(44px,7vw,84px);letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums;color:var(--text)}
-.cost-price small{font-family:var(--mono);font-weight:400;font-size:14px;color:var(--muted);letter-spacing:0;margin-left:10px}
-.cost-eq{font-family:var(--mono);font-size:13.5px;color:var(--muted)}
-.cost-eq b{color:var(--text);font-weight:500}
+.cost-r{display:flex;flex-direction:column;gap:22px;min-width:0;container-type:inline-size}
+.cost-price{font-family:var(--display);font-weight:800;font-size:clamp(34px,7vw,84px);font-size:clamp(30px,14cqi,84px);white-space:nowrap;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums;color:var(--text)}
+.cost-price small{display:block;font-family:var(--mono);font-weight:400;font-size:14px;color:var(--muted);letter-spacing:0;margin:10px 0 0;white-space:normal}
+.cost-step h3{font-size:19px;margin:0 0 6px;letter-spacing:-.01em}
+.cost-step p{color:var(--muted);font-size:15.5px;margin:0;max-width:52ch;overflow-wrap:anywhere}
+.rng-3 button{background:none;border:0;padding:4px 0;font:inherit;color:var(--muted);cursor:pointer;transition:color .2s;flex:1;min-width:0}
+.rng-3 button:first-child{text-align:left}
+@media (max-width:440px){.rng-3{font-size:11px;gap:6px}.rng-3 button{white-space:nowrap}}
+.rng-3 button:nth-child(2){text-align:center}.rng-3 button:last-child{text-align:right}
+.rng-3 button[aria-pressed="true"]{color:var(--text)}
+.cost-src{font-family:var(--mono);font-size:11.5px;color:#6e6e73;margin:0;line-height:1.6;overflow-wrap:anywhere}
 .rng{-webkit-appearance:none;appearance:none;width:100%;height:28px;background:transparent;cursor:pointer;margin:0}
 .rng::-webkit-slider-runnable-track{height:6px;border-radius:99px;background:linear-gradient(90deg,var(--accent) var(--fill,0%),var(--line) var(--fill,0%))}
 .rng::-moz-range-track{height:6px;border-radius:99px;background:var(--line)}
@@ -159,7 +165,7 @@ header.nav{position:sticky;top:0;z-index:50;background:rgba(0,0,0,.82);backdrop-
 .rng::-moz-range-thumb{width:20px;height:20px;border-radius:7px;background:var(--text);border:3px solid var(--accent)}
 .rng-ends{display:flex;justify-content:space-between;gap:16px;font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-top:8px}
 .rng-ends span:last-child{text-align:right}
-@media (max-width:820px){.cost{grid-template-columns:1fr;padding:22px;gap:28px}.split{max-width:300px;width:100%;margin:0 auto}}
+@media (max-width:1020px){.cost{grid-template-columns:1fr;padding:clamp(20px,4vw,32px);gap:28px}.split{max-width:300px;width:100%;margin:0 auto}}
 
 /* how it works */
 .how{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:48px;align-items:start}
@@ -456,22 +462,23 @@ footer{border-top:1px solid var(--line);padding:32px 0 44px;margin-top:40px;colo
   <div class="wrap">
     <div class="sec-head" data-reveal>
       <div class="eyebrow">Why share</div>
-      <h2 id="h-cost">A chip costs the same to make whether one team uses it or a hundred.</h2>
-      <p>Drag the slider. The same chip is split between more designs, and your share of the bill shrinks with it.</p>
+      <h2 id="h-cost">Three ways to make a chip. Pay only for what you need.</h2>
+      <p>Drag the slider. Each step shares the same masks between more designs, and your bill shrinks with it.</p>
     </div>
     <div class="cost" data-reveal>
       <div class="split" id="split" role="img" aria-label="One chip split into tiles. Your tile is highlighted."></div>
       <div class="cost-r">
         <div>
           <div class="kv">You pay</div>
-          <div class="cost-price"><span id="costPrice">RM2,500</span><small>per tile</small></div>
+          <div class="cost-price"><span id="costPrice">RM2,500</span><small id="costUnit">per tile</small></div>
         </div>
-        <div class="cost-eq" id="costEq"></div>
+        <div class="cost-step" id="costStep"></div>
         <div>
-          <label class="sr" for="costRng">How many designs share the chip</label>
-          <input class="rng" type="range" id="costRng" min="1" max="10" step="1" value="10">
-          <div class="rng-ends"><span>Book your own wafer run</span><span>Carpool with 99 others</span></div>
+          <label class="sr" for="costRng">How the chip is made</label>
+          <input class="rng" type="range" id="costRng" min="0" max="2" step="1" value="2">
+          <div class="rng-ends rng-3" id="costEnds"></div>
         </div>
+        <p class="cost-src" id="costSrc"></p>
       </div>
     </div>
   </div>
@@ -823,8 +830,16 @@ const CONFIG = {
     areaFilledPct: 68      // % of the 10 x 10 chip map already taken
   },
   costSlider: {
-    runCost: 250000,       // RM, indicative cost of booking the whole chip yourself
-    maxDesigns: 100        // runCost / maxDesigns = the Student Tile price
+    // Three ways to get chips made. Prices in RM; edit freely.
+    steps: [
+      { tab: "Go alone", title: "Your own mask set", price: 430000, plus: true, unit: "for your own run", grid: 1,
+        text: "A dedicated 180 nm mask set alone is typically US$100k or more. Every chip on the wafer is yours, and so is the whole bill." },
+      { tab: "Share a slot", title: "A slot on a shared run", price: 30000, plus: false, unit: "per slot", grid: 4,
+        text: "Shared runs such as wafer.space split one mask set between many designs: about US$7,000 for a slot of 1,000 chips. Ideal at volume, but a first prototype usually needs ten." },
+      { tab: "Share a tile", title: "A SiliKongsi tile", price: 2500, plus: false, unit: "per student tile · private startup tiles from RM6,000", grid: 10,
+        text: "We split a slot into tiles, so students and startups pay only for the chips they need, packaged and tested in Penang, with private designs kept private." }
+    ],
+    source: "Mask set: industry estimates for 180 nm (sub-US$100k to US$300k). Slot: wafer.space public pricing. Converted at about RM4.3 per US$."
   },
   precheck: {
     rules: 1204,
@@ -985,37 +1000,47 @@ function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let
   update();
 })();
 
-/* ---------- cost slider ---------- */
+/* ---------- cost slider: alone -> shared slot -> tile ---------- */
 (() => {
-  const C = CONFIG.costSlider, box = $("#split"), rngEl = $("#costRng"), priceEl = $("#costPrice"), eq = $("#costEq");
-  const maxK = Math.round(Math.sqrt(C.maxDesigns)); rngEl.max = maxK;
-  let shown = C.runCost / C.maxDesigns, raf = 0, touched = false;
-  const tween = target => {
+  const C = CONFIG.costSlider, S = C.steps, box = $("#split"), rngEl = $("#costRng"), priceEl = $("#costPrice"),
+        unitEl = $("#costUnit"), stepEl = $("#costStep"), endsEl = $("#costEnds");
+  rngEl.max = S.length - 1;
+  $("#costSrc").textContent = C.source;
+  endsEl.innerHTML = S.map((s, i) => '<button type="button" data-i="' + i + '">' + s.tab + "</button>").join("");
+  let shown = S[S.length - 1].price, raf = 0, touched = false, cur = -1;
+  const fmt = (v, plus) => rm(v) + (plus ? "+" : "");
+  const tween = (target, plus) => {
     cancelAnimationFrame(raf);
-    if (reduce) { shown = target; priceEl.textContent = rm(target); return; }
+    if (reduce) { shown = target; priceEl.textContent = fmt(target, plus); return; }
     const from = shown, t0 = performance.now();
-    const step = t => { const k = clamp((t - t0) / 350), e = 1 - Math.pow(1 - k, 3); shown = from + (target - from) * e; priceEl.textContent = rm(shown); if (k < 1) raf = requestAnimationFrame(step); };
+    const step = t => { const k = clamp((t - t0) / 450), e = 1 - Math.pow(1 - k, 3); shown = from + (target - from) * e;
+      priceEl.textContent = fmt(shown, plus && k >= 1); if (k < 1) raf = requestAnimationFrame(step); };
     raf = requestAnimationFrame(step);
   };
   const render = () => {
-    const k = +rngEl.value, n = k * k, price = C.runCost / n;
-    box.style.gridTemplateColumns = "repeat(" + k + ",1fr)"; box.style.gridTemplateRows = "repeat(" + k + ",1fr)";
-    box.style.gap = k > 6 ? "3px" : "5px";
-    let h = ""; for (let i = 0; i < n; i++) h += i === 0 ? '<i class="me"></i>' : "<i></i>"; box.innerHTML = h;
-    tween(price);
-    eq.innerHTML = "<b>" + rm(C.runCost) + "</b> for the whole chip ÷ <b>" + n + "</b> " + (n === 1 ? "design (yours alone)" : "designs sharing it");
-    rngEl.style.setProperty("--fill", ((k - 1) / (maxK - 1) * 100) + "%");
-    rngEl.setAttribute("aria-valuetext", n === 1 ? "Your own run, " + rm(price) : "Sharing with " + (n - 1) + " others, " + rm(price) + " per tile");
+    const i = +rngEl.value, s = S[i], g = s.grid, n = g * g;
+    if (i === cur) return; cur = i;
+    box.style.gridTemplateColumns = "repeat(" + g + ",1fr)"; box.style.gridTemplateRows = "repeat(" + g + ",1fr)";
+    box.style.gap = g > 6 ? "3px" : "6px";
+    // your share: the whole chip, then one slot, then one tile
+    let h = ""; for (let k = 0; k < n; k++) h += k === 0 ? '<i class="me"></i>' : "<i></i>"; box.innerHTML = h;
+    tween(s.price, s.plus);
+    unitEl.textContent = s.unit;
+    stepEl.innerHTML = "<h3>" + s.title + "</h3><p>" + s.text + "</p>";
+    rngEl.style.setProperty("--fill", (i / (S.length - 1) * 100) + "%");
+    rngEl.setAttribute("aria-valuetext", s.title + ", " + fmt(s.price, s.plus) + " " + s.unit);
+    endsEl.querySelectorAll("button").forEach((b, k) => b.setAttribute("aria-pressed", k === i ? "true" : "false"));
   };
   rngEl.addEventListener("input", () => { touched = true; render(); });
   ["pointerdown", "keydown"].forEach(ev => rngEl.addEventListener(ev, () => touched = true));
-  rngEl.value = maxK; render(); priceEl.textContent = rm(C.runCost / C.maxDesigns);
-  // play the story once when it scrolls into view: alone -> shared
+  endsEl.addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; touched = true; rngEl.value = b.dataset.i; render(); });
+  rngEl.value = S.length - 1; render();
+  // play the story once when it scrolls into view: alone -> slot -> tile
   if (!reduce && "IntersectionObserver" in window) {
     const io = new IntersectionObserver(es => {
       if (!es[0].isIntersecting) return; io.disconnect();
-      rngEl.value = 1; shown = C.runCost; render();
-      let k = 1; const iv = setInterval(() => { if (touched || k >= maxK) return clearInterval(iv); rngEl.value = ++k; render(); }, 330);
+      rngEl.value = 0; shown = S[0].price; render();
+      let k = 0; const iv = setInterval(() => { if (touched || k >= S.length - 1) return clearInterval(iv); rngEl.value = ++k; render(); }, 1400);
     }, { threshold: .6 });
     io.observe(box);
   }
