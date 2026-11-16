@@ -587,7 +587,7 @@ footer{border-top:1px solid var(--line);padding:32px 0 44px;margin-top:40px;colo
     <div class="sec-head" data-reveal>
       <div class="eyebrow">Live shuttle tracker</div>
       <h2 id="h-shuttle">See who is already on board.</h2>
-      <p>Small student designs sit next to larger commercial ones, packed with no wasted space. Company designs stay private: the map shows only that the area is taken.</p>
+      <p>Student tiles share one die. Company designs get their own private die on the same run, and the map shows only that the area is taken.</p>
     </div>
     <div class="tracker" data-reveal>
       <div class="tr-meta">
@@ -621,9 +621,9 @@ footer{border-top:1px solid var(--line);padding:32px 0 44px;margin-top:40px;colo
         </div>
         <div class="mine-label" id="mineLabel" role="status" aria-live="polite"></div>
         <div class="legend" aria-hidden="true">
-          <span><i style="background:var(--uni)"></i>University</span><span><i style="background:var(--accent)"></i>You</span>
-          <span><i style="background:var(--bone);background-image:repeating-linear-gradient(135deg,rgba(0,0,0,.5) 0 3px,transparent 3px 7px)"></i>Startup (private)</span>
-          <span><i style="background:var(--sme);background-image:repeating-linear-gradient(135deg,rgba(0,0,0,.5) 0 3px,transparent 3px 7px)"></i>SME (private)</span>
+          <span><i style="background:var(--uni)"></i>Student tile</span><span><i style="background:var(--accent)"></i>You</span>
+          <span><i style="background:var(--bone);background-image:repeating-linear-gradient(135deg,rgba(0,0,0,.5) 0 3px,transparent 3px 7px)"></i>Startup (private die)</span>
+          <span><i style="background:var(--sme);background-image:repeating-linear-gradient(135deg,rgba(0,0,0,.5) 0 3px,transparent 3px 7px)"></i>SME (private die)</span>
           <span><i style="border:1px dashed #636366"></i>Free</span>
         </div>
         <p class="hint">Hover, tap or use arrow keys to inspect a design. Mock data.</p>
@@ -709,15 +709,15 @@ footer{border-top:1px solid var(--line);padding:32px 0 44px;margin-top:40px;colo
     <div class="sec-head" data-reveal>
       <div class="eyebrow">Why us</div>
       <h2 id="h-compare">Between a hobby shuttle and a full commercial run.</h2>
-      <p>Hobby shuttles are cheap but public. Commercial multi-project wafers (MPW) are private but priced for funded teams. We sit in the gap.</p>
+      <p>Hobby shuttles are cheap but public. Commercial multi-project wafers (MPW) are private but priced for funded teams. We run a shared MPW for Malaysia: students share tiles on one die, and startups get their own private die on the same run.</p>
     </div>
     <div class="tbl" data-reveal tabindex="0" role="region" aria-label="Comparison table, scrolls sideways on small screens">
       <table>
         <thead><tr><th scope="col"><span class="sr">Feature</span></th><th scope="col">Hobby shuttles</th><th scope="col">Commercial MPW</th><th scope="col" class="us">SiliKongsi</th></tr></thead>
         <tbody>
           <tr><th scope="row">Private IP</th><td><span class="x" aria-label="No">✗</span>Open source required</td><td><span class="y" aria-label="Yes">✓</span>Under NDA</td><td class="us"><span class="y" aria-label="Yes">✓</span>NDA-protected</td></tr>
-          <tr><th scope="row">Price per prototype</th><td>Lowest</td><td>High, with minimum area fees</td><td class="us">From RM2,500 per tile</td></tr>
-          <tr><th scope="row">Mixed-size designs</th><td><span class="x" aria-label="No">✗</span>Fixed small tiles</td><td><span class="y" aria-label="Yes">✓</span>Priced by area</td><td class="us"><span class="y" aria-label="Yes">✓</span>Small tiles to a dedicated die</td></tr>
+          <tr><th scope="row">Price per prototype</th><td>Lowest</td><td>High, with minimum area fees</td><td class="us">RM2,500 per student tile, from RM20,000 per private slot</td></tr>
+          <tr><th scope="row">Mixed-size designs</th><td><span class="x" aria-label="No">✗</span>Fixed small tiles</td><td><span class="y" aria-label="Yes">✓</span>Priced by area</td><td class="us"><span class="y" aria-label="Yes">✓</span>Student tiles to a private die</td></tr>
           <tr><th scope="row">AI pre-check before fab</th><td><span class="x" aria-label="No">✗</span>Standard rule checks</td><td><span class="x" aria-label="No">✗</span>Your own sign-off</td><td class="us"><span class="y" aria-label="Yes">✓</span>Plain-English report</td></tr>
           <tr><th scope="row">Local packaging &amp; test</th><td><span class="x" aria-label="No">✗</span>Shipped from abroad</td><td><span class="x" aria-label="No">✗</span>Arranged separately</td><td class="us"><span class="y" aria-label="Yes">✓</span>Penang</td></tr>
           <tr><th scope="row">Malaysian fab roadmap</th><td><span class="x" aria-label="No">✗</span></td><td><span class="x" aria-label="No">✗</span></td><td class="us"><span class="y" aria-label="Yes">✓</span>Planned, Phase 2</td></tr>
@@ -764,7 +764,7 @@ footer{border-top:1px solid var(--line);padding:32px 0 44px;margin-top:40px;colo
     <div class="faq" data-reveal>
       <details open>
         <summary>Can my design stay private?</summary>
-        <p>Yes. Commercial designs are covered by an NDA. Your layout is not published, and the public shuttle map shows your area only as a private design. Student tiles are open source, which keeps them at the lowest price.</p>
+        <p>Yes. Startup and SME designs get their own die on the shared run, so the chips you receive carry only your design, and the layout is covered by an NDA. The public shuttle map shows your area only as a private die. Student tiles are open source and share one die, which keeps them at the lowest price.</p>
       </details>
       <details>
         <summary>Which processes do you use?</summary>
@@ -836,7 +836,7 @@ const CONFIG = {
         text: "A dedicated 180 nm mask set alone is typically US$100k or more. Every chip on the wafer is yours, and so is the whole bill." },
       { tab: "Share a slot", title: "A slot on a shared run", price: 30000, plus: false, unit: "per slot", grid: 4,
         text: "Shared runs such as wafer.space split one mask set between many designs: about US$7,000 for a slot of 1,000 chips. Ideal at volume, but a first prototype usually needs ten." },
-      { tab: "Share a tile", title: "A SiliKongsi tile", price: 2500, plus: false, unit: "per student tile · private startup tiles from RM6,000", grid: 10,
+      { tab: "Share a tile", title: "A SiliKongsi tile", price: 2500, plus: false, unit: "per student tile · private startup slots from RM20,000", grid: 10,
         text: "We split a slot into tiles, so students and startups pay only for the chips they need, packaged and tested in Penang, with private designs kept private." }
     ],
     source: "Mask set: industry estimates for 180 nm (sub-US$100k to US$300k). Slot: wafer.space public pricing. Converted at about RM4.3 per US$."
@@ -864,15 +864,15 @@ const CONFIG = {
     com: {
       label: "Commercial",
       plans: [
-        { name: "Prototype Tile", who: "For a first private prototype",
-          prefix: "from", price: "RM6,000", unit: "per tile", popular: false, cta: "Submit a design", href: "#upload",
-          features: ["Private NDA-protected design", "AI pre-check", "Penang packaging & test report"] },
+        { name: "Private Slot", who: "For a first private prototype",
+          prefix: "from", price: "RM20,000", unit: "per slot", popular: false, cta: "Submit a design", href: "#upload",
+          features: ["Your own die on the shared run: chips carry only your design", "NDA-protected layout", "AI pre-check", "~50 chips packaged & tested in Penang, with report"] },
         { name: "Startup Shuttle Pass", who: "For startups and SMEs shipping regularly",
           prefix: "", price: "RM1,500", unit: "per month", popular: true, cta: "Book a demo", href: "#demo",
-          features: ["Guaranteed slot on every shuttle", "Private designs", "Mixed-size designs", "Priority pre-checks"] },
-        { name: "Dedicated Die", who: "For products that outgrow a tile",
+          features: ["Guaranteed private slot on every shuttle", "Priority pre-checks", "Engineer support for pad ring & sign-off", "Discounted packaging in Penang"] },
+        { name: "Dedicated Run", who: "For products moving to volume",
           prefix: "", price: "Contact us", unit: "", popular: false, cta: "Talk to us", href: "#demo",
-          features: ["Larger custom die area", "Multiple shuttles", "Engineering support"] }
+          features: ["Your own mask set and wafers", "Volume packaging & test in Penang", "Engineering support"] }
       ]
     }
   }
@@ -1081,7 +1081,7 @@ const Tracker = (() => {
     if (v < .17 && free(c, rr, 2, 2) && area + 4 <= target) { w = 2; h = 2; }
     else if (v < .47 && free(c, rr, 2, 1) && area + 2 <= target) { w = 2; }
     const t = r();
-    const type = w * h === 4 ? (t < .55 ? "SME" : "Startup") : w * h === 2 ? (t < .55 ? "Startup" : t < .85 ? "SME" : "University") : (t < .8 ? "University" : "Startup");
+    const type = w * h === 4 ? (t < .55 ? "SME" : "Startup") : w * h === 2 ? (t < .6 ? "Startup" : "SME") : "University";
     mark(c, rr, w, h); area += w * h;
     tiles.push({ c, r: rr, w, h, type, priv: type !== "University", name: uni[Math.floor(r() * uni.length)] });
   }
@@ -1093,7 +1093,7 @@ const Tracker = (() => {
   const map = $("#map"), tip = $("#tip"), wrap = $("#mapWrap");
   const idOf = t => "T-" + pad(t.r + 1) + "-" + pad(t.c + 1), sizeOf = t => t.w + "×" + t.h;
   const place = (el, t) => { el.style.gridColumn = (t.c + 1) + " / span " + t.w; el.style.gridRow = (t.r + 1) + " / span " + t.h; };
-  const label = t => t.slot ? (t.mine ? t.mine + ", shipping on " + S.name : "Free space, next in line") : (t.priv ? "Private design" : t.name) + ", " + t.type;
+  const label = t => t.slot ? (t.mine ? t.mine + ", shipping on " + S.name : "Free space, next in line") : (t.priv ? "Private die" : t.name) + ", " + t.type;
   tiles.sort((a, b) => a.r - b.r || a.c - b.c);
   const btns = tiles.map((t, i) => {
     const b = document.createElement("button"); b.type = "button"; b.tabIndex = i === 0 ? 0 : -1; b.dataset.i = i;
@@ -1108,7 +1108,7 @@ const Tracker = (() => {
     const t = tiles[+b.dataset.i];
     tip.innerHTML = '<div class="id">' + idOf(t) + " · " + sizeOf(t) + "</div>" + (t.slot
       ? '<div class="nm">' + (t.mine ? esc(t.mine) : "Free space") + '</div><div class="ow">' + (t.mine ? "Shipping on " + esc(S.name) : "Next design goes here") + "</div>"
-      : '<div class="nm">' + (t.priv ? "🔒 Private design" : esc(t.name)) + '</div><div class="ow">' + t.type + "</div>");
+      : '<div class="nm">' + (t.priv ? "🔒 Private die" : esc(t.name)) + '</div><div class="ow">' + t.type + "</div>");
     const W = wrap.clientWidth, tw = tip.offsetWidth, th = tip.offsetHeight;
     let x = b.offsetLeft + b.offsetWidth / 2 - tw / 2, y = b.offsetTop - th - 10;
     x = Math.max(4, Math.min(x, W - tw - 4)); if (y < 4) y = b.offsetTop + b.offsetHeight + 10;
