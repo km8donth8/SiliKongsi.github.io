@@ -1300,7 +1300,7 @@ const Tracker = (() => {
     tiles.push({ c, r: rr, w, name: uni[Math.floor(r() * uni.length)], from: who[Math.floor(r() * who.length)] });
   }
   let slot = null;
-  find: for (let rr = 0; rr < R; rr++) for (let c = 0; c < C - 1; c++) if (free(c, rr, 2)) { slot = { c, r: rr, w: 2, slot: true }; mark(c, rr, 2); break find; }
+  find: for (let rr = 0; rr < R; rr++) for (let c = 0; c < C; c++) if (free(c, rr, 1)) { slot = { c, r: rr, w: 1, slot: true }; mark(c, rr, 1); break find; }
   if (slot) tiles.push(slot);
   tiles.sort((a, b) => a.r - b.r || a.c - b.c);
 
@@ -1340,9 +1340,9 @@ const Tracker = (() => {
       if (!slot) return;
       const el = $("#slotTile"); slot.mine = owner;
       el.className = "t mine"; el.textContent = "YOU";
-      el.setAttribute("aria-label", idOf(slot) + ", 2 tiles: " + owner + ", shipping on " + S.name);
-      const ml = $("#mineLabel"); ml.textContent = owner + " — 2 tiles on student die S1, shipping on " + S.name; ml.classList.add("show");
-      tilesUsed += 2; setBars();
+      el.setAttribute("aria-label", idOf(slot) + ", 1 tile: " + owner + ", shipping on " + S.name);
+      const ml = $("#mineLabel"); ml.textContent = owner + " — 1 tile on student die S1, shipping on " + S.name; ml.classList.add("show");
+      tilesUsed += 1; setBars();
     }
   };
 })();
@@ -1383,26 +1383,36 @@ const Tracker = (() => {
     await wait(1000);
     line("dim", "› stitching onto " + esc(CONFIG.shuttle.name) + "…");
     await wait(500);
-    await fly(owner);
-    line("", esc(owner) + " — shipping on " + esc(CONFIG.shuttle.name));
+    line("", esc(owner) + " — booked on " + esc(CONFIG.shuttle.name));
+    line("dim", "› scroll down to the shuttle tracker to see your tile");
+    fly(owner);
     busy = false;
   }
 
-  async function fly(owner) {
-    const slot = Tracker.slotEl(); if (!slot) return;
-    $("#mapWrap").scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
-    if (reduce || !slot.animate) { Tracker.claim(owner); return; }
-    await wait(950);
-    const b = slot.getBoundingClientRect(), g = document.createElement("div");
-    g.className = "ghost"; g.style.width = b.width + "px"; g.style.height = b.height + "px";
-    document.body.appendChild(g);
-    const sx = innerWidth / 2 - b.width / 2, sy = -b.height - 20;
-    await g.animate([
-      { transform: "translate(" + sx + "px," + sy + "px) scale(2.2) rotate(-8deg)", opacity: .2 },
-      { transform: "translate(" + (b.left + (sx - b.left) * .25) + "px," + (b.top - 70) + "px) scale(1.5) rotate(3deg)", opacity: 1, offset: .7 },
-      { transform: "translate(" + b.left + "px," + b.top + "px) scale(1) rotate(0)", opacity: 1 }
-    ], { duration: 1300, easing: "cubic-bezier(.3,.7,.2,1)", fill: "forwards" }).finished;
-    Tracker.claim(owner); g.remove();
+  let flyPending = false;
+  // No auto-scroll: wait until the visitor scrolls the student die into view, then play the tile animation.
+  function fly(owner) {
+    const slot = Tracker.slotEl(); if (!slot || flyPending || slot.classList.contains("mine")) return;
+    flyPending = true;
+    const play = async () => {
+      if (reduce || !slot.animate) { Tracker.claim(owner); flyPending = false; return; }
+      await wait(250);
+      const b = slot.getBoundingClientRect(), g = document.createElement("div");
+      g.className = "ghost"; g.style.width = b.width + "px"; g.style.height = b.height + "px";
+      document.body.appendChild(g);
+      const sx = innerWidth / 2 - b.width / 2, sy = -b.height - 20;
+      await g.animate([
+        { transform: "translate(" + sx + "px," + sy + "px) scale(2.2) rotate(-8deg)", opacity: .2 },
+        { transform: "translate(" + (b.left + (sx - b.left) * .25) + "px," + (b.top - 70) + "px) scale(1.5) rotate(3deg)", opacity: 1, offset: .7 },
+        { transform: "translate(" + b.left + "px," + b.top + "px) scale(1) rotate(0)", opacity: 1 }
+      ], { duration: 1300, easing: "cubic-bezier(.3,.7,.2,1)", fill: "forwards" }).finished;
+      Tracker.claim(owner); g.remove(); flyPending = false;
+    };
+    if (!("IntersectionObserver" in window)) { play(); return; }
+    const io = new IntersectionObserver(entries => {
+      if (entries.some(e => e.isIntersecting)) { io.disconnect(); play(); }
+    }, { threshold: 0.6 });
+    io.observe($("#mapWrap"));
   }
 
   $("#sampleBtn").addEventListener("click", () => run(P.sampleFile));
